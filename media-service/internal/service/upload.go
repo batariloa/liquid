@@ -35,7 +35,7 @@ func (u *UploadService) UploadSong(file *multipart.File, fileHeader *multipart.F
 	filePath, err := util.SaveFile(*file, uniqueFileName)
 	if err != nil {
 		fmt.Print(err)
-		return "", apierror.InternalServerError{}
+		return "", apierror.NewInternalServerError("Error uploading the file.")
 	}
 
 	return filePath, nil

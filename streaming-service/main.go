@@ -1,5 +1,8 @@
 package main
 
-import "fmt"
+import "github.com/batariloa/StreamingService/internal/server"
 
-func main() { fmt.Println("sadas") }
+func main() {
+
+	server.StartServer()
+}

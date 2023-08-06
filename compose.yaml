@@ -28,7 +28,7 @@ services:
       - my-net
 
   media-service:
-    build: ./MediaService # Path to your Go app's source code
+    build: ./media-service 
     container_name: media-service
     restart: always
     depends_on:
@@ -42,9 +42,9 @@ services:
       DB_USER: postgres
       DB_PASSWORD: mysecretpassword
       DB_NAME: mydatabase
-      KAFKA_URL: kafka:9092 # Updated environment variable name
-      KAFKA_TOPIC: topic1 # Updated environment variable name
-    command: ["go", "run", "main.go"] # Replace with the command to start your Go app
+      KAFKA_URL: kafka:9092 
+      KAFKA_TOPIC: topic1 
+    command: ["go", "run", "main.go"] 
     networks:
       - my-net
 

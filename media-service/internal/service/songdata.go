@@ -27,5 +27,15 @@ func (s *SongDataService) Save(data *songdata.SongData) (*songdata.SongData, err
 }
 
 func (s *SongDataService) GetSongById(songId int) (*songdata.SongData, error) {
-	return s.songDataRepository.GetById(songId)
+
+	song, err := s.songDataRepository.GetById(songId)
+	if err != nil {
+		return nil, err
+	}
+
+	if song == nil {
+		return nil, apierror.NewNotFoundError("Error not found")
+	}
+
+	return song, nil
 }

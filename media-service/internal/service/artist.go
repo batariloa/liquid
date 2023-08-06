@@ -3,11 +3,6 @@ package service
 import (
 	"StorageService/internal/repository/artist"
 	"StorageService/internal/util/apierror"
-	"errors"
-)
-
-var (
-	ErrArtistNotFound = errors.New("artist not found")
 )
 
 type ArtistService struct {
@@ -23,13 +18,12 @@ func NewArtistService(repository artist.Repository) *ArtistService {
 func (s *ArtistService) GetArtistById(artistId int) (*artist.Artist, error) {
 
 	result, err := s.ArtistRepository.GetById(artistId)
+	if err != nil {
+		return nil, err
+	}
 
 	if result == nil {
 		return nil, apierror.NotFoundError{Message: "Artist not found."}
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	return result, nil
