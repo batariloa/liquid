@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - my-net
+
+  kafka:
+    image: spotify/kafka
+    container_name: kafka
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      ADVERTISED_HOST: "kafka"
+      ADVERTISED_PORT: 9092
+    networks:
+      - my-net
+
+  media-service:
+    build: ./MediaService # Path to your Go app's source code
+    container_name: media-service
+    restart: always
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: mysecretpassword
+      DB_NAME: mydatabase
+      KAFKA_URL: kafka:9092 # Updated environment variable name
+      KAFKA_TOPIC: topic1 # Updated environment variable name
+    command: ["go", "run", "main.go"] # Replace with the command to start your Go app
+    networks:
+      - my-net
+
+volumes:
+  pg_data:
+  kafka_data:
+
+
+networks:
+  my-net:
+    driver: bridge
+
