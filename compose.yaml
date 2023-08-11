@@ -47,6 +47,18 @@ services:
     command: ["go", "run", "main.go"] 
     networks:
       - my-net
+  
+  streaming-service:
+    build: ./streaming-service
+    container_name: streaming-service
+    restart: always
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    command: ["go", "run", "main.go"] 
+    networks:
+      - my-net
 
 volumes:
   pg_data:

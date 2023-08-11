@@ -11,6 +11,10 @@ var downloadUrl = "http://localhost:3000/songs/%s/download"
 type SongFetcherService struct {
 }
 
+func NewFetcherService() *SongFetcherService {
+	return &SongFetcherService{}
+}
+
 func (*SongFetcherService) FetchSongFileResponseById(id int) (*http.Response, error) {
 
 	downloadUrl := fmt.Sprintf(downloadUrl, id)

@@ -12,9 +12,15 @@ type StreamHandler struct {
 	fetcherService service.SongFetcherService
 }
 
+func New(fs *service.SongFetcherService) *StreamHandler {
+	return &StreamHandler{
+		fetcherService: *fs,
+	}
+}
+
 func (h *StreamHandler) StreamFileToUserHandler(c *gin.Context) {
 
-	idStr := c.Param("id")
+	idStr := c.Param("songId")
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
