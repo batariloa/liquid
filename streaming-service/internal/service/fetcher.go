@@ -3,10 +3,11 @@ package service
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
-var downloadUrl = "http://localhost:3000/songs/%s/download"
+var baseURL = "http://media-service:3000/songs/%d/download"
 
 type SongFetcherService struct {
 }
@@ -17,13 +18,14 @@ func NewFetcherService() *SongFetcherService {
 
 func (*SongFetcherService) FetchSongFileResponseById(id int) (*http.Response, error) {
 
-	downloadUrl := fmt.Sprintf(downloadUrl, id)
+	downloadURL := fmt.Sprintf(baseURL, id)
+	log.Println("Download url", downloadURL)
 
-	response, err := http.Get(downloadUrl)
+	response, err := http.Get(downloadURL)
 	if err != nil {
+		log.Println("Error getting song", err)
 		return nil, fmt.Errorf("Error whle making the GET request: %s\n", err)
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("Error: GET request returned status code %d\n", response.StatusCode)
