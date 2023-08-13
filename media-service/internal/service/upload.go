@@ -4,7 +4,6 @@ import (
 	"StorageService/internal/datastruct"
 	"StorageService/internal/util"
 	"StorageService/internal/util/apierror"
-	"errors"
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
@@ -26,8 +25,7 @@ func (u *UploadService) UploadSong(file *multipart.File, fileHeader *multipart.F
 	fileExt := filepath.Ext(fileName)
 
 	if fileExt != ".mp3" {
-		fmt.Println("Not an mp3 file")
-		return "", errors.New("not an mp3 file")
+		return "", apierror.NewBadRequestError("Not an mp3 file")
 	}
 
 	uniqueFileName := util.GenerateRandomFileName(fileExt)

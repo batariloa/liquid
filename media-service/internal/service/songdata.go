@@ -34,7 +34,7 @@ func (s *SongDataService) GetSongById(songId int) (*songdata.SongData, error) {
 	}
 
 	if song == nil {
-		return nil, apierror.NewNotFoundError("Error not found")
+		return nil, apierror.NewNotFoundError("Song not found")
 	}
 
 	return song, nil

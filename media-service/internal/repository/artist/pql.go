@@ -1,13 +1,10 @@
 package artist
 
 import (
+	"StorageService/internal/util/apierror"
 	"database/sql"
 	"errors"
 	"fmt"
-)
-
-var (
-	ErrArtistNotFound = errors.New("artist not found")
 )
 
 type PqlRepository struct {
@@ -30,7 +27,7 @@ func (r *PqlRepository) GetById(artistId int) (*Artist, error) {
 	err := row.Scan(&resultArtist.ID, &resultArtist.Name)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrArtistNotFound
+			return nil, apierror.NewNotFoundError("Artist not found.")
 		}
 		return nil, fmt.Errorf("failed to fetch artist: %w", err)
 	}
