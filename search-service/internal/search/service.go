@@ -44,5 +44,5 @@ func (s *SearchService) IndexSong(song model.Song) error {
 		"title":  song.Title,
 		"artist": song.Artist,
 	}
-	return s.index.Index(fmt.Sprintf("%s - %s", song.Title, song.Artist), doc)
+	return s.index.Index(song.ID, doc)
 }

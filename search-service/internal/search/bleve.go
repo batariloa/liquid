@@ -24,7 +24,9 @@ func InitializeBleveIndex() (bleve.Index, error) {
 			return nil, err
 		}
 	} else {
+
 		mapping := bleve.NewIndexMapping()
+
 		index, err = bleve.New(indexDirectory, mapping)
 		if err != nil {
 			log.Fatal("Error creating Bleve index:", err)
