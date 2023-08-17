@@ -10,7 +10,10 @@ import (
 
 func main() {
 
-	index := search.InitializeBleveIndex()
+	index, err := search.InitializeBleveIndex()
+	if err != nil {
+		panic(err)
+	}
 
 	searchService := search.NewSearchService(index)
 

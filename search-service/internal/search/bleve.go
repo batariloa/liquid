@@ -2,19 +2,45 @@ package search
 
 import (
 	"log"
+	"os"
 
 	"github.com/blevesearch/bleve/v2"
 )
 
-func InitializeBleveIndex() bleve.Index {
+const indexDirectory = "songs.bleve"
 
-	mapping := bleve.NewIndexMapping()
-
-	var err error
-	index, err := bleve.New("songs.bleve", mapping)
+func InitializeBleveIndex() (bleve.Index, error) {
+	indexExists, err := indexDirectoryExists(indexDirectory)
 	if err != nil {
-		log.Fatal("Error creating Bleve index:", err)
+		return nil, err
 	}
 
-	return index
+	var index bleve.Index
+
+	if indexExists {
+		index, err = bleve.Open(indexDirectory)
+		if err != nil {
+			log.Fatal("Error opening existing Bleve index:", err)
+			return nil, err
+		}
+	} else {
+		mapping := bleve.NewIndexMapping()
+		index, err = bleve.New(indexDirectory, mapping)
+		if err != nil {
+			log.Fatal("Error creating Bleve index:", err)
+			return nil, err
+		}
+	}
+
+	return index, nil
+}
+
+func indexDirectoryExists(directoryPath string) (bool, error) {
+	_, err := os.Stat(directoryPath)
+	if os.IsNotExist(err) {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	}
+	return true, nil
 }
