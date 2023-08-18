@@ -43,7 +43,7 @@ services:
       DB_PASSWORD: mysecretpassword
       DB_NAME: mydatabase
       KAFKA_URL: kafka:9092 
-      KAFKA_TOPIC: topic1 
+      KAFKA_TOPIC: song_uploads 
     command: ["go", "run", "main.go"] 
     networks:
       - my-net
@@ -57,6 +57,21 @@ services:
     ports:
       - "8080:8080"
     command: ["go", "run", "main.go"] 
+    networks:
+      - my-net
+
+  search-service:
+    build: ./search-service
+    container_name: search-service
+    restart: always
+    depends_on:
+      - kafka
+    ports:
+      - "8085:8085"
+    command: ["go", "run", "main.go"]
+    environment:
+      KAFKA_URL: kafka:9092 
+      KAFKA_TOPIC: song_uploads 
     networks:
       - my-net
 

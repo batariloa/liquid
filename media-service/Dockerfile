@@ -1,12 +1,16 @@
-FROM golang:1.17-alpine
+FROM golang:1.20-alpine AS builder
 
 WORKDIR /app
 
+COPY go.mod go.sum ./
+
+RUN go mod download
+
 COPY . .
 
-RUN go build -o myapp
+RUN go build -o media-service 
 
-EXPOSE 3000 
+EXPOSE 3000
 
-CMD ["./myapp"]
+CMD ["./media-service"]
 

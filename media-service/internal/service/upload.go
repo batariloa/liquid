@@ -47,7 +47,7 @@ func (u *UploadService) GenerateAndPublishSongUploadEvent(artistID int, title, a
 		SongID:     artistID,
 	}
 
-	err := u.KafkaService.PublishEvent(uploadEvent)
+	err := u.KafkaService.PublishUploadSongEvent(uploadEvent)
 	if err != nil {
 		return err
 	}

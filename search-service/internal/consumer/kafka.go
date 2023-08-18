@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/batariloa/search-service/internal/model"
 	"github.com/batariloa/search-service/internal/search"
@@ -16,10 +17,17 @@ type KafkaConsumerService struct {
 }
 
 func NewKafkaConsumerService(ss *search.SearchService) (*KafkaConsumerService, error) {
+
+	brokerAddress := os.Getenv("KAFKA_URL")
+	topic := os.Getenv("KAFKA_TOPIC")
+
+	log.Printf("Kafka broker address: %s\n", brokerAddress)
+
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+
+		Brokers:  []string{brokerAddress},
 		GroupID:  "search-consumer-group",
-		Topic:    "song-upload-events",
+		Topic:    topic,
 		MinBytes: 10e3, // 10KB
 		MaxBytes: 10e6, // 10MB
 	})
@@ -39,7 +47,7 @@ func (c *KafkaConsumerService) ConsumeEvents() {
 			continue
 		}
 
-		var song model.Song
+		var song model.SongUploadEvent
 		err = json.Unmarshal(msg.Value, &song)
 		if err != nil {
 			log.Println("Error decoding Kafka event:", err)
@@ -51,6 +59,7 @@ func (c *KafkaConsumerService) ConsumeEvents() {
 			log.Println("Error indexing song:", err)
 		}
 
+		log.Printf("Consumed Kafka message: %s", song)
 		c.reader.CommitMessages(context.Background(), msg)
 	}
 }

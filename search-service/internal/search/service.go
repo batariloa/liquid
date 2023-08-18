@@ -1,8 +1,6 @@
 package search
 
 import (
-	"fmt"
-
 	"github.com/batariloa/search-service/internal/model"
 	"github.com/blevesearch/bleve/v2"
 )
@@ -15,7 +13,7 @@ func NewSearchService(index bleve.Index) *SearchService {
 	return &SearchService{index: index}
 }
 
-func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, error) {
+func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.SongUploadEvent, error) {
 	queryString := "title:" + query + " OR artist:" + query
 	searchQuery := bleve.NewQueryStringQuery(queryString)
 	searchRequest := bleve.NewSearchRequest(searchQuery)
@@ -26,23 +24,23 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, 
 	}
 
 	// Collect the matching songs
-	var songs []model.Song
+	var songs []model.SongUploadEvent
 	for _, hit := range searchResults.Hits {
-		songs = append(songs, model.Song{
+		songs = append(songs, model.SongUploadEvent{
 			ID:     hit.ID,
 			Title:  hit.Fields["title"].(string),
-			Artist: hit.Fields["artist"].(string),
+			ArtistName: hit.Fields["artist"].(string),
 		})
 	}
 
 	return songs, nil
 }
 
-func (s *SearchService) IndexSong(song model.Song) error {
+func (s *SearchService) IndexSong(song model.SongUploadEvent) error {
 	doc := map[string]interface{}{
 		"id":     song.ID,
 		"title":  song.Title,
-		"artist": song.Artist,
+		"artist": song.ArtistName,
 	}
 	return s.index.Index(song.ID, doc)
 }

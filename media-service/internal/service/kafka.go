@@ -4,6 +4,7 @@ import (
 	"StorageService/internal/datastruct"
 	"context"
 	"encoding/json"
+	"log"
 	"os"
 
 	"github.com/segmentio/kafka-go"
@@ -26,11 +27,13 @@ func NewKafkaService() *KafkaService {
 	}
 }
 
-func (ks *KafkaService) PublishEvent(data datastruct.UploadKafkaEvent) error {
+func (ks *KafkaService) PublishUploadSongEvent(data datastruct.UploadKafkaEvent) error {
 	msgValue, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
+
+	log.Printf("Publishing event with value: %s", msgValue)
 
 	err = ks.Producer.WriteMessages(context.Background(),
 		kafka.Message{
