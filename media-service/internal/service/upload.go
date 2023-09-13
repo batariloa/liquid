@@ -43,7 +43,7 @@ func (u *UploadService) GenerateAndPublishSongUploadEvent(artistID int, title, a
 
 	uploadEvent := datastruct.UploadKafkaEvent{
 		ArtistName: artistName,
-		SongName:   title,
+		Title:      title,
 		SongID:     artistID,
 	}
 

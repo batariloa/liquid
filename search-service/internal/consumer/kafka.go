@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/batariloa/search-service/internal/mapper"
 	"github.com/batariloa/search-service/internal/model"
 	"github.com/batariloa/search-service/internal/search"
 	"github.com/segmentio/kafka-go"
@@ -47,14 +48,16 @@ func (c *KafkaConsumerService) ConsumeEvents() {
 			continue
 		}
 
-		var song model.SongUploadEvent
-		err = json.Unmarshal(msg.Value, &song)
+		var event model.SongUploadEvent
+		err = json.Unmarshal(msg.Value, &event)
 		if err != nil {
 			log.Println("Error decoding Kafka event:", err)
 			continue
 		}
 
-		err = c.searchService.IndexSong(song)
+		song := mapper.EventToSong(&event)
+
+		err = c.searchService.IndexSong(*song)
 		if err != nil {
 			log.Println("Error indexing song:", err)
 		}

@@ -1,7 +1,7 @@
 package model
 
-type Song struct {
-	ID         string `json:"songId"`
+type SongUploadEvent struct {
+	ID         int    `json:"songId"`
 	Title      string `json:"title"`
 	ArtistName string `json:"artistName"`
 }

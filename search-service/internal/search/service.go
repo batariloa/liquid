@@ -13,7 +13,7 @@ func NewSearchService(index bleve.Index) *SearchService {
 	return &SearchService{index: index}
 }
 
-func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.SongUploadEvent, error) {
+func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, error) {
 	queryString := "title:" + query + " OR artist:" + query
 	searchQuery := bleve.NewQueryStringQuery(queryString)
 	searchRequest := bleve.NewSearchRequest(searchQuery)
@@ -24,11 +24,11 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.SongUp
 	}
 
 	// Collect the matching songs
-	var songs []model.SongUploadEvent
+	var songs []model.Song
 	for _, hit := range searchResults.Hits {
-		songs = append(songs, model.SongUploadEvent{
-			ID:     hit.ID,
-			Title:  hit.Fields["title"].(string),
+		songs = append(songs, model.Song{
+			ID:         hit.ID,
+			Title:      hit.Fields["title"].(string),
 			ArtistName: hit.Fields["artist"].(string),
 		})
 	}
@@ -36,7 +36,7 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.SongUp
 	return songs, nil
 }
 
-func (s *SearchService) IndexSong(song model.SongUploadEvent) error {
+func (s *SearchService) IndexSong(song model.Song) error {
 	doc := map[string]interface{}{
 		"id":     song.ID,
 		"title":  song.Title,
