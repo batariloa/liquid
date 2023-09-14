@@ -39,12 +39,12 @@ func (u *UploadService) UploadSong(file *multipart.File, fileHeader *multipart.F
 	return filePath, nil
 }
 
-func (u *UploadService) GenerateAndPublishSongUploadEvent(artistID int, title, artistName string) error {
+func (u *UploadService) GenerateAndPublishSongUploadEvent(songId int, title, artistName string) error {
 
 	uploadEvent := datastruct.UploadKafkaEvent{
 		ArtistName: artistName,
 		Title:      title,
-		SongID:     artistID,
+		SongID:     songId,
 	}
 
 	err := u.KafkaService.PublishUploadSongEvent(uploadEvent)

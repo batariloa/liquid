@@ -1,6 +1,8 @@
 package search
 
 import (
+	"log"
+
 	"github.com/batariloa/search-service/internal/model"
 	"github.com/blevesearch/bleve/v2"
 )
@@ -14,9 +16,13 @@ func NewSearchService(index bleve.Index) *SearchService {
 }
 
 func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, error) {
+	log.Printf("Searching for title or artist: %s", query)
+
 	queryString := "title:" + query + " OR artist:" + query
 	searchQuery := bleve.NewQueryStringQuery(queryString)
 	searchRequest := bleve.NewSearchRequest(searchQuery)
+	searchRequest.Fields = []string{"title", "artist"}
+	searchRequest.Size = 10
 
 	searchResults, err := s.index.Search(searchRequest)
 	if err != nil {
@@ -26,11 +32,16 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, 
 	// Collect the matching songs
 	var songs []model.Song
 	for _, hit := range searchResults.Hits {
-		songs = append(songs, model.Song{
-			ID:         hit.ID,
-			Title:      hit.Fields["title"].(string),
-			ArtistName: hit.Fields["artist"].(string),
-		})
+		song := model.Song{
+			ID: hit.ID,
+		}
+		if title, ok := hit.Fields["title"].(string); ok {
+			song.Title = title
+		}
+		if artist, ok := hit.Fields["artist"].(string); ok {
+			song.ArtistName = artist
+		}
+		songs = append(songs, song)
 	}
 
 	return songs, nil

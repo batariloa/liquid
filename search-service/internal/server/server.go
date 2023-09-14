@@ -1,21 +1,23 @@
 package server
 
 import (
-	"github.com/batariloa/search-service/internal/search"
+	"log"
+
+	"github.com/batariloa/search-service/internal/handler"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	router    *gin.Engine
-	searchSvc *search.SearchService
+	router *gin.Engine
+	sh     *handler.SearchHandler
 }
 
-func NewServer(searchSvc *search.SearchService) *Server {
+func NewServer(searchHandler *handler.SearchHandler) *Server {
 	router := gin.Default()
 
 	s := &Server{
-		router:    router,
-		searchSvc: searchSvc,
+		router: router,
+		sh:     searchHandler,
 	}
 
 	s.setupRoutes()
@@ -24,20 +26,10 @@ func NewServer(searchSvc *search.SearchService) *Server {
 }
 
 func (s *Server) setupRoutes() {
-	s.router.GET("/search/:query", s.searchByTitleAndArtist)
-}
-
-func (s *Server) searchByTitleAndArtist(c *gin.Context) {
-	query := c.Param("query")
-	songs, err := s.searchSvc.SearchSongsByTitleOrArtist(query)
-	if err != nil {
-		c.JSON(500, gin.H{"error": "Internal Server Error"})
-		return
-	}
-
-	c.JSON(200, gin.H{"songs": songs})
+	s.router.GET("/search/:query", s.sh.HandleSearchByTitleAndArtist)
 }
 
 func (s *Server) Run(addr string) error {
+	log.Printf("Service starting on %s", addr)
 	return s.router.Run(addr)
 }

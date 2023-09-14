@@ -115,14 +115,14 @@ func (h *SongHandler) UploadSong(w http.ResponseWriter, r *http.Request) {
 	}
 
 	song := songdata.New(path, artistId, title)
-	res, err := h.SongDataService.Save(song)
+	uploadedSong, err := h.SongDataService.Save(song)
 
-	err = h.UploadService.GenerateAndPublishSongUploadEvent(artistResult.ID, title, artistResult.Name)
+	err = h.UploadService.GenerateAndPublishSongUploadEvent(uploadedSong.Id, title, artistResult.Name)
 	if err != nil {
 		fmt.Println("Kafka error: ", err)
 		apierror.HandleAPIError(w, err)
 		return
 	}
 
-	helper.WriteJSONResponse(w, res, http.StatusCreated)
+	helper.WriteJSONResponse(w, uploadedSong, http.StatusCreated)
 }

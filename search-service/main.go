@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/batariloa/search-service/internal/consumer"
+	"github.com/batariloa/search-service/internal/handler"
 	"github.com/batariloa/search-service/internal/search"
 	"github.com/batariloa/search-service/internal/server"
 )
@@ -19,11 +20,11 @@ func main() {
 
 	kafkaConsumer, err := consumer.NewKafkaConsumerService(searchService)
 	if err != nil {
-		fmt.Println("Cannot establish a Kafka connection.")
+		log.Println("Cannot establish a Kafka connection.")
 	}
+	go kafkaConsumer.ConsumeEvents()
 
-	kafkaConsumer.ConsumeEvents()
-
-	serverInstance := server.NewServer(searchService)
-	serverInstance.Run("localhost:8085")
+	searchHandler := handler.NewSearchHandler(searchService)
+	serverInstance := server.NewServer(searchHandler)
+	serverInstance.Run(":8085")
 }
