@@ -1,24 +1,36 @@
 package handler
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 
-	"github.com/batariloa/StreamingService/internal/service"
+	service "github.com/batariloa/StreamingService/internal/service/fetcher"
 	"github.com/gin-gonic/gin"
 )
 
 type StreamHandler struct {
-	fetcherService service.SongFetcherService
+	fetcherService service.SongFetcher
 }
 
-func New(fs *service.SongFetcherService) *StreamHandler {
+func New(fs service.SongFetcher) *StreamHandler {
 	return &StreamHandler{
-		fetcherService: *fs,
+		fetcherService: fs,
 	}
 }
 
-func (h *StreamHandler) StreamFileToUserHandler(c *gin.Context) {
+// Stream Song godoc
+// @Summary Stream a song to user
+// @Description Stream a song to the user by providing the song ID
+// @ID streamSongToUser
+// @Produce octet-stream
+// @Param songId path integer true "Song ID to stream"
+// @Success 200 {file} application/octet-stream
+// @Failure 400 {string} string "Bad Request: Invalid ID"
+// @Failure 500 {string} string "Internal Server Error: File download failed"
+// @Router /v1/stream/{songId} [get]
+func (h *StreamHandler) StreamSong(c *gin.Context) {
 
 	idStr := c.Param("songId")
 
@@ -27,12 +39,15 @@ func (h *StreamHandler) StreamFileToUserHandler(c *gin.Context) {
 		c.String(http.StatusBadRequest, "Invalid ID")
 	}
 
-	response, err := h.fetcherService.FetchSongFileResponseById(id)
+	response, err := h.fetcherService.Fetch(id)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "File download failed")
 		return
 	}
 	defer response.Body.Close()
 
-	h.fetcherService.WriteSongContentToResponse(c.Writer, response.Body)
+	_, err = io.Copy(c.Writer, response.Body)
+	if err != nil {
+		fmt.Println("Error while streaming:", err)
+	}
 }

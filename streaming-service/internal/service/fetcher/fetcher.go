@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 )
@@ -16,7 +15,7 @@ func NewFetcherService() *SongFetcherService {
 	return &SongFetcherService{}
 }
 
-func (*SongFetcherService) FetchSongFileResponseById(id int) (*http.Response, error) {
+func (*SongFetcherService) Fetch(id int) (*http.Response, error) {
 
 	downloadURL := fmt.Sprintf(baseURL, id)
 	log.Println("Download url", downloadURL)
@@ -32,11 +31,4 @@ func (*SongFetcherService) FetchSongFileResponseById(id int) (*http.Response, er
 	}
 
 	return response, nil
-}
-
-func (*SongFetcherService) WriteSongContentToResponse(w io.Writer, body io.Reader) {
-	_, err := io.Copy(w, body)
-	if err != nil {
-		fmt.Println("Error while streaming:", err)
-	}
 }

@@ -14,7 +14,47 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/v1/stream/{songId}": {
+            "get": {
+                "description": "Stream a song to the user by providing the song ID",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "summary": "Stream a song to user",
+                "operationId": "streamSongToUser",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Song ID to stream",
+                        "name": "songId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request: Invalid ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error: File download failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

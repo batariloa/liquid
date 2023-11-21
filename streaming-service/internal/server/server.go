@@ -29,7 +29,7 @@ func (s *Server) setupRoutes(router *gin.Engine) {
 	v1 := router.Group("v1")
 	{
 		v1.GET("/stream/:songId",
-			s.streamHandler.StreamFileToUserHandler)
+			s.streamHandler.StreamSong)
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
