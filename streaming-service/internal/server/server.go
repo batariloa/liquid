@@ -3,6 +3,8 @@ package server
 import (
 	"github.com/batariloa/StreamingService/internal/handler"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
@@ -29,4 +31,5 @@ func (s *Server) setupRoutes(router *gin.Engine) {
 		v1.GET("/stream/:songId",
 			s.streamHandler.StreamFileToUserHandler)
 	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
