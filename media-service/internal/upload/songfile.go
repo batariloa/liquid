@@ -1,4 +1,4 @@
-package datastruct
+package upload
 
 type SongFile struct {
 	Path     string `json:"path"`

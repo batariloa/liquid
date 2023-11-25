@@ -1,7 +1,6 @@
 package kafka
 
 import (
-	"StorageService/internal/datastruct"
 	"context"
 	"encoding/json"
 	"log"
@@ -27,8 +26,8 @@ func NewKafkaService() *KafkaService {
 	}
 }
 
-func (ks *KafkaService) PublishUploadSongEvent(data datastruct.UploadKafkaEvent) error {
-	msgValue, err := json.Marshal(data)
+func (ks *KafkaService) PublishUploadSongEvent(event UploadSongEvent) error {
+	msgValue, err := json.Marshal(event)
 	if err != nil {
 		return err
 	}

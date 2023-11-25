@@ -1,7 +1,6 @@
 package upload
 
 import (
-	"StorageService/internal/datastruct"
 	"StorageService/internal/kafka"
 	"StorageService/internal/util"
 	"StorageService/internal/util/apierror"
@@ -42,7 +41,7 @@ func (u *UploadService) UploadSong(file *multipart.File, fileHeader *multipart.F
 
 func (u *UploadService) GenerateAndPublishSongUploadEvent(songId int, title, artistName string) error {
 
-	uploadEvent := datastruct.UploadKafkaEvent{
+	uploadEvent := kafka.UploadSongEvent{
 		ArtistName: artistName,
 		Title:      title,
 		SongID:     songId,

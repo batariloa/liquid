@@ -1,6 +1,6 @@
-package datastruct
+package kafka
 
-type UploadKafkaEvent struct {
+type UploadSongEvent struct {
 	ArtistName string `json:"artistName"`
 	Title      string `json:"title"`
 	SongID     int    `json:"songId"`
