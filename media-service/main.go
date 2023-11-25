@@ -1,11 +1,13 @@
 package main
 
 import (
+	"StorageService/internal/artist"
+	"StorageService/internal/download"
 	"StorageService/internal/handlers"
-	"StorageService/internal/repository/artist"
-	"StorageService/internal/repository/songdata"
+	"StorageService/internal/kafka"
 	"StorageService/internal/server"
-	"StorageService/internal/service"
+	"StorageService/internal/song"
+	"StorageService/internal/upload"
 	"StorageService/internal/util"
 	"log"
 )
@@ -13,16 +15,16 @@ import (
 func main() {
 	dbCon := util.DbConnect()
 
-	songDataRepo := songdata.NewPqlRepository(dbCon)
+	songDataRepo := song.NewPqlRepository(dbCon)
 	artistRepository := artist.NewPqlRepository(dbCon)
 
-	songDataService := service.NewSongDataService(songDataRepo)
-	artistService := service.NewArtistService(artistRepository)
-	kafkaService := service.NewKafkaService()
-	uploadService := service.NewUploadService(kafkaService)
-	downloadService := service.NewDownloadService(songDataService)
+	songDataService := song.NewSongDataService(songDataRepo)
+	artistService := artist.NewArtistService(artistRepository)
+	kafkaService := kafka.NewKafkaService()
+	uploadService := upload.NewUploadService(kafkaService)
+	downloadService := download.NewDownloadService(songDataService)
 
-	storageHandler := handlers.NewSongHandler(uploadService, songDataService, kafkaService, artistService)
+	storageHandler := handlers.NewSongHandler(*uploadService, *songDataService, *kafkaService, artistService)
 	artistHandler := handlers.NewArtistHandler(artistService)
 	downloadHandler := handlers.NewDownloadHandler(downloadService)
 

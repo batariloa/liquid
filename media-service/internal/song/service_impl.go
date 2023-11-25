@@ -1,22 +1,21 @@
-package service
+package song
 
 import (
-	"StorageService/internal/repository/songdata"
 	"StorageService/internal/util/apierror"
 	"fmt"
 )
 
 type SongDataService struct {
-	songDataRepository songdata.Repository
+	songDataRepository Repository
 }
 
-func NewSongDataService(repository songdata.Repository) *SongDataService {
+func NewSongDataService(repository Repository) *SongDataService {
 	return &SongDataService{
 		songDataRepository: repository,
 	}
 }
 
-func (s *SongDataService) Save(data *songdata.SongData) (*songdata.SongData, error) {
+func (s *SongDataService) Save(data *SongData) (*SongData, error) {
 	data, err := s.songDataRepository.Save(data)
 	if err != nil {
 		fmt.Println("Trouble saving song data", err)
@@ -26,7 +25,7 @@ func (s *SongDataService) Save(data *songdata.SongData) (*songdata.SongData, err
 	return data, nil
 }
 
-func (s *SongDataService) GetSongById(songId int) (*songdata.SongData, error) {
+func (s *SongDataService) GetSongById(songId int) (*SongData, error) {
 
 	song, err := s.songDataRepository.GetById(songId)
 	if err != nil {

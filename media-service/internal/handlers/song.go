@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"StorageService/internal/artist"
 	"StorageService/internal/handlers/helper"
-	"StorageService/internal/repository/songdata"
-	"StorageService/internal/service"
+	"StorageService/internal/kafka"
+	"StorageService/internal/song"
+	"StorageService/internal/upload"
 	"StorageService/internal/util/apierror"
 	"encoding/json"
 	"fmt"
@@ -16,17 +18,17 @@ import (
 )
 
 type SongHandler struct {
-	UploadService   *service.UploadService
-	SongDataService *service.SongDataService
-	KafkaService    *service.KafkaService
-	ArtistService   *service.ArtistService
+	UploadService   upload.UploadService
+	SongDataService song.SongDataService
+	KafkaService    kafka.KafkaService
+	ArtistService   artist.ArtistService
 }
 
 func NewSongHandler(
-	uploadService *service.UploadService,
-	songDataService *service.SongDataService,
-	kafkaService *service.KafkaService,
-	artistService *service.ArtistService,
+	uploadService upload.UploadService,
+	songDataService song.SongDataService,
+	kafkaService kafka.KafkaService,
+	artistService artist.ArtistService,
 ) *SongHandler {
 
 	return &SongHandler{
@@ -114,7 +116,7 @@ func (h *SongHandler) UploadSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	song := songdata.New(path, artistId, title)
+	song := song.New(path, artistId, title)
 	uploadedSong, err := h.SongDataService.Save(song)
 
 	err = h.UploadService.GenerateAndPublishSongUploadEvent(uploadedSong.Id, title, artistResult.Name)

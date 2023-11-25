@@ -1,7 +1,8 @@
-package service
+package upload
 
 import (
 	"StorageService/internal/datastruct"
+	"StorageService/internal/kafka"
 	"StorageService/internal/util"
 	"StorageService/internal/util/apierror"
 	"fmt"
@@ -10,10 +11,10 @@ import (
 )
 
 type UploadService struct {
-	KafkaService *KafkaService
+	KafkaService *kafka.KafkaService
 }
 
-func NewUploadService(ks *KafkaService) *UploadService {
+func NewUploadService(ks *kafka.KafkaService) *UploadService {
 	return &UploadService{
 		KafkaService: ks,
 	}

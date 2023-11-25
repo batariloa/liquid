@@ -1,15 +1,16 @@
-package service
+package download
 
 import (
+	"StorageService/internal/song"
 	"StorageService/internal/util/apierror"
 	"os"
 )
 
 type DownloadService struct {
-	songDataService *SongDataService
+	songDataService *song.SongDataService
 }
 
-func NewDownloadService(songDataService *SongDataService) *DownloadService {
+func NewDownloadService(songDataService *song.SongDataService) *DownloadService {
 
 	return &DownloadService{
 		songDataService: songDataService,

@@ -1,21 +1,20 @@
-package service
+package artist
 
 import (
-	"StorageService/internal/repository/artist"
 	"StorageService/internal/util/apierror"
 )
 
-type ArtistService struct {
-	ArtistRepository artist.Repository
+type ArtistServiceImpl struct {
+	ArtistRepository Repository
 }
 
-func NewArtistService(repository artist.Repository) *ArtistService {
-	return &ArtistService{
+func NewArtistService(repository Repository) *ArtistServiceImpl {
+	return &ArtistServiceImpl{
 		ArtistRepository: repository,
 	}
 }
 
-func (s *ArtistService) GetArtistById(artistId int) (*artist.Artist, error) {
+func (s *ArtistServiceImpl) GetArtistById(artistId int) (*Artist, error) {
 
 	result, err := s.ArtistRepository.GetById(artistId)
 	if err != nil {
@@ -29,7 +28,7 @@ func (s *ArtistService) GetArtistById(artistId int) (*artist.Artist, error) {
 	return result, nil
 }
 
-func (s *ArtistService) Save(artist *artist.Artist) (*artist.Artist, error) {
+func (s *ArtistServiceImpl) Save(artist *Artist) (*Artist, error) {
 
 	res, err := s.ArtistRepository.Save(artist)
 	if err != nil {

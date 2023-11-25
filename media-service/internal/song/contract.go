@@ -1,4 +1,4 @@
-package songdata
+package song
 
 type Repository interface {
 	Save(data *SongData) (*SongData, error)

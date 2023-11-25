@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"StorageService/internal/service"
+	"StorageService/internal/download"
 	"StorageService/internal/util/apierror"
 	"fmt"
 	"net/http"
@@ -12,10 +12,10 @@ import (
 )
 
 type DownloadHandler struct {
-	DownloadService *service.DownloadService
+	DownloadService *download.DownloadService
 }
 
-func NewDownloadHandler(downloadService *service.DownloadService) *DownloadHandler {
+func NewDownloadHandler(downloadService *download.DownloadService) *DownloadHandler {
 
 	return &DownloadHandler{
 		DownloadService: downloadService,

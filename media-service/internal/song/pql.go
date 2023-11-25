@@ -1,4 +1,4 @@
-package songdata
+package song
 
 import (
 	"StorageService/internal/util/apierror"

@@ -1,4 +1,4 @@
-package service
+package kafka
 
 import (
 	"StorageService/internal/datastruct"
