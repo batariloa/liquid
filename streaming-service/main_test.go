@@ -23,7 +23,7 @@ func TestSongHandler_getSongById(t *testing.T) {
 	handler := handler.New(fetchService)
 
 	r := SetUpRouter()
-	r.GET("/:songId", handler.StreamSongToUserController)
+	r.GET("/:songId", handler.StreamSong)
 	req, _ := http.NewRequest("GET", "/3", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)

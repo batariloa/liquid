@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 )
 
 type PqlRepository struct {
@@ -43,6 +44,7 @@ func (r *PqlRepository) Save(artist *Artist) (*Artist, error) {
 	var insertedArtist Artist
 	err := row.Scan(&insertedArtist.ID, &insertedArtist.Name)
 	if err != nil {
+		log.Print("Failed to save artist", err)
 		return nil, fmt.Errorf("failed to save artist: %w", err)
 	}
 

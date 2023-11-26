@@ -19,7 +19,9 @@ func SetUpRouter() *mux.Router {
 
 func TestCreateartist(t *testing.T) {
 
-	db, err := test.SetUpDbContainer()
+	db, err := test.SetUpDbContainer(t)
+
+	defer db.Close()
 
 	if err != nil {
 		t.Fatal(err)
@@ -55,4 +57,11 @@ func TestCreateartist(t *testing.T) {
 	t.Logf("Response Body: %s", w.Body.String())
 
 	assert.Equal(t, http.StatusCreated, w.Code)
+
+	artist, err := repository.GetById(1)
+	if err != nil {
+		t.Fatalf("Failed getting artist %s", err)
+	}
+
+	assert.Equal(t, artist.Name, expectedName)
 }
