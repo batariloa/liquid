@@ -1,4 +1,4 @@
-package kafka
+package types
 
 type UploadSongEvent struct {
 	ArtistName string `json:"artistName"`

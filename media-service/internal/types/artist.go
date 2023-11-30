@@ -1,4 +1,4 @@
-package artist
+package types
 
 type Artist struct {
 	ID   int    `json:"id"`

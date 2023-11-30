@@ -1,4 +1,4 @@
-package util
+package db
 
 import (
 	"database/sql"
@@ -9,7 +9,11 @@ import (
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
-func DbConnect() *sql.DB {
+var (
+	DB *sql.DB
+)
+
+func Init() error {
 
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -20,24 +24,25 @@ func DbConnect() *sql.DB {
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	db, err := sql.Open("postgres", connStr)
+	conn, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
 	}
 
-	err = createSchema(db)
+	err = createSchema(conn)
 	if err != nil {
 		log.Fatal("Error executing SQL file:", err)
 	}
 
-	err = db.Ping()
+	err = conn.Ping()
 	if err != nil {
 		log.Fatal("Error pinging the database: ", err)
 	}
 
 	log.Println("Successfully connected to the database!")
 
-	return db
+	DB = conn
+	return nil
 }
 
 func createSchema(db *sql.DB) error {

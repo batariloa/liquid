@@ -1,4 +1,4 @@
-package song
+package types
 
 type SongData struct {
 	Id       int    `json:"id"`

@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"StorageService/internal/artist"
+	"StorageService/internal/data"
 	"StorageService/internal/handlers/helper"
-	"StorageService/internal/kafka"
-	"StorageService/internal/song"
-	"StorageService/internal/upload"
+	"StorageService/internal/service"
 	"StorageService/internal/util/apierror"
 	"encoding/json"
 	"fmt"
@@ -17,34 +15,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type SongHandler struct {
-	UploadService   upload.UploadService
-	SongDataService song.SongDataService
-	KafkaService    kafka.KafkaService
-	ArtistService   artist.ArtistService
-}
-
-func NewSongHandler(
-	uploadService upload.UploadService,
-	songDataService song.SongDataService,
-	kafkaService kafka.KafkaService,
-	artistService artist.ArtistService,
-) *SongHandler {
-
-	return &SongHandler{
-		UploadService:   uploadService,
-		SongDataService: songDataService,
-		KafkaService:    kafkaService,
-		ArtistService:   artistService,
-	}
-}
-
-func (h *SongHandler) GetSongs(w http.ResponseWriter, r *http.Request) {
+func HandleGetSongs(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, "List of songs")
 }
 
-func (h *SongHandler) GetSongByID(w http.ResponseWriter, r *http.Request) {
+func HandleGetSongByID(w http.ResponseWriter, r *http.Request) {
 
 	idStr, _ := mux.Vars(r)["id"] // NOTE: Safe to ignore error, because it's always defined.
 
@@ -54,7 +30,7 @@ func (h *SongHandler) GetSongByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	song, err := h.SongDataService.GetSongById(id)
+	song, err := data.GetSongById(id)
 	if err != nil {
 		apierror.HandleAPIError(w, err)
 		return
@@ -70,7 +46,7 @@ func (h *SongHandler) GetSongByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *SongHandler) UploadSong(w http.ResponseWriter, r *http.Request) {
+func HandleUploadSong(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(10 << 20) //10 MBs
 
@@ -103,13 +79,13 @@ func (h *SongHandler) UploadSong(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	artistResult, err := h.ArtistService.GetArtistById(artistId)
+	artistResult, err := data.GetArtistById(artistId)
 	if err != nil {
 		apierror.HandleAPIError(w, err)
 		return
 	}
 
-	path, err := h.UploadService.UploadSong(&file, handler)
+	path, err := service.UploadSong(&file, handler)
 	if err != nil {
 		fmt.Println("error uploading song")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -117,9 +93,9 @@ func (h *SongHandler) UploadSong(w http.ResponseWriter, r *http.Request) {
 	}
 
 	song := song.New(path, artistId, title)
-	uploadedSong, err := h.SongDataService.Save(song)
+	uploadedSong, err := data.SaveSong(song)
 
-	err = h.UploadService.GenerateAndPublishSongUploadEvent(uploadedSong.Id, title, artistResult.Name)
+	err = service.GenerateAndPublishSongUploadEvent(uploadedSong.Id, title, artistResult.Name)
 	if err != nil {
 		fmt.Println("Kafka error: ", err)
 		apierror.HandleAPIError(w, err)

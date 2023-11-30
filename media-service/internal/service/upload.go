@@ -1,7 +1,7 @@
-package upload
+package service
 
 import (
-	"StorageService/internal/kafka"
+	"StorageService/internal/types"
 	"StorageService/internal/util"
 	"StorageService/internal/util/apierror"
 	"fmt"
@@ -9,17 +9,7 @@ import (
 	"path/filepath"
 )
 
-type UploadService struct {
-	KafkaService *kafka.KafkaService
-}
-
-func NewUploadService(ks *kafka.KafkaService) *UploadService {
-	return &UploadService{
-		KafkaService: ks,
-	}
-}
-
-func (u *UploadService) UploadSong(file *multipart.File, fileHeader *multipart.FileHeader) (string, error) {
+func UploadSong(file *multipart.File, fileHeader *multipart.FileHeader) (string, error) {
 
 	fileName := fileHeader.Filename
 	fileExt := filepath.Ext(fileName)
@@ -39,15 +29,15 @@ func (u *UploadService) UploadSong(file *multipart.File, fileHeader *multipart.F
 	return filePath, nil
 }
 
-func (u *UploadService) GenerateAndPublishSongUploadEvent(songId int, title, artistName string) error {
+func GenerateAndPublishSongUploadEvent(songId int, title, artistName string) error {
 
-	uploadEvent := kafka.UploadSongEvent{
+	uploadEvent := types.UploadSongEvent{
 		ArtistName: artistName,
 		Title:      title,
 		SongID:     songId,
 	}
 
-	err := u.KafkaService.PublishUploadSongEvent(uploadEvent)
+	err := PublishUploadSongEvent(uploadEvent)
 	if err != nil {
 		return err
 	}

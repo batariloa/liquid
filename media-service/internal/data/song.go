@@ -1,25 +1,22 @@
-package song
+package data
 
 import (
+	"StorageService/internal/db"
 	"StorageService/internal/util/apierror"
 	"database/sql"
 	"fmt"
 )
 
-type PqlRepository struct {
-	db *sql.DB
+type SongData struct {
+	Id       int    `json:"id"`
+	FilePath string `json:"file_path"`
+	Title    string `json:"title"`
+	Artist   int    `json:"artist"`
 }
 
-func NewPqlRepository(conn *sql.DB) *PqlRepository {
+func SaveSong(data *SongData) (*SongData, error) {
 
-	return &PqlRepository{
-		db: conn,
-	}
-}
-
-func (s *PqlRepository) Save(data *SongData) (*SongData, error) {
-
-	_, err := s.db.Exec("INSERT INTO songs (file_path, title, artist) VALUES ($1, $2, $3)",
+	_, err := db.DB.Exec("INSERT INTO songs (file_path, title, artist) VALUES ($1, $2, $3)",
 		data.FilePath, data.Title, data.Artist)
 	if err != nil {
 		fmt.Println("Error while saving song data:", err)
@@ -27,7 +24,7 @@ func (s *PqlRepository) Save(data *SongData) (*SongData, error) {
 	}
 
 	query := "SELECT id, file_path, title, artist FROM songs WHERE artist = $1 ORDER BY id DESC LIMIT 1"
-	row := s.db.QueryRow(query, data.Artist)
+	row := db.DB.QueryRow(query, data.Artist)
 
 	var savedData SongData
 	err = row.Scan(&savedData.Id, &savedData.FilePath, &savedData.Title, &savedData.Artist)
@@ -38,9 +35,9 @@ func (s *PqlRepository) Save(data *SongData) (*SongData, error) {
 	return &savedData, nil
 }
 
-func (s *PqlRepository) GetById(Id int) (*SongData, error) {
+func GetSongById(Id int) (*SongData, error) {
 
-	row := s.db.QueryRow("SELECT id, file_path, title, artist FROM songs WHERE id = $1", Id)
+	row := db.DB.QueryRow("SELECT id, file_path, title, artist FROM songs WHERE id = $1", Id)
 
 	song := &SongData{}
 
