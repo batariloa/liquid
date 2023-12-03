@@ -1,8 +1,8 @@
 package service
 
 import (
+	"StorageService/internal/apierror"
 	"StorageService/internal/data"
-	"StorageService/internal/util/apierror"
 )
 
 func GetArtistById(artistId int) (*data.Artist, error) {

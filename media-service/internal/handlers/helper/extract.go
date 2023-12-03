@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"StorageService/internal/util/apierror"
+	"StorageService/internal/apierror"
 	"encoding/json"
 	"net/http"
 )
@@ -65,4 +65,3 @@ func GetSongId(r *http.Request) (string, error) {
 
 	return id, nil
 }
-

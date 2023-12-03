@@ -1,8 +1,8 @@
 package data
 
 import (
+	"StorageService/internal/apierror"
 	"StorageService/internal/db"
-	"StorageService/internal/util/apierror"
 	"database/sql"
 	"errors"
 	"fmt"

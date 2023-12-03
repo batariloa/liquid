@@ -1,8 +1,8 @@
 package data
 
 import (
+	"StorageService/internal/apierror"
 	"StorageService/internal/db"
-	"StorageService/internal/util/apierror"
 	"database/sql"
 	"fmt"
 )
@@ -12,6 +12,14 @@ type SongData struct {
 	FilePath string `json:"file_path"`
 	Title    string `json:"title"`
 	Artist   int    `json:"artist"`
+}
+
+func NewSong(filePath string, title string, artistId int) *SongData {
+	return &SongData{
+		FilePath: filePath,
+		Title:    title,
+		Artist:   artistId,
+	}
 }
 
 func SaveSong(data *SongData) (*SongData, error) {

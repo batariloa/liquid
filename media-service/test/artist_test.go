@@ -1,7 +1,8 @@
-package artist
+package test
 
 import (
-	"StorageService/test"
+	"StorageService/internal/data"
+	"StorageService/internal/handlers"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -19,17 +20,13 @@ func SetUpRouter() *mux.Router {
 
 func TestCreateartist(t *testing.T) {
 
-	db, err := test.SetUpDbContainer(t)
+	db, err := SetUpDbContainer(t)
 
 	defer db.Close()
 
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	repository := NewPqlRepository(db)
-	service := NewArtistService(repository)
-	handler := NewArtistHandler(service)
 
 	expectedName := "Some Name"
 
@@ -43,7 +40,7 @@ func TestCreateartist(t *testing.T) {
 	}
 
 	router := SetUpRouter()
-	router.HandleFunc("/artists", handler.HandleCreateArtist).Methods("POST")
+	router.HandleFunc("/artists", handlers.HandleCreateArtist).Methods("POST")
 
 	req, err := http.NewRequest("POST", "/artists", bytes.NewBuffer(requestBody))
 	if err != nil {
@@ -58,7 +55,7 @@ func TestCreateartist(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	artist, err := repository.GetById(1)
+	artist, err := data.GetArtistById(1)
 	if err != nil {
 		t.Fatalf("Failed getting artist %s", err)
 	}

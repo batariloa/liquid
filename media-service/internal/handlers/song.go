@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"StorageService/internal/apierror"
 	"StorageService/internal/data"
 	"StorageService/internal/handlers/helper"
 	"StorageService/internal/service"
-	"StorageService/internal/util/apierror"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -16,7 +16,6 @@ import (
 )
 
 func HandleGetSongs(w http.ResponseWriter, r *http.Request) {
-
 	fmt.Fprint(w, "List of songs")
 }
 
@@ -92,7 +91,7 @@ func HandleUploadSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	song := song.New(path, artistId, title)
+	song := data.NewSong(path, title, artistId)
 	uploadedSong, err := data.SaveSong(song)
 
 	err = service.GenerateAndPublishSongUploadEvent(uploadedSong.Id, title, artistResult.Name)

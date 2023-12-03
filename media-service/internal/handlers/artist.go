@@ -1,22 +1,13 @@
 package handlers
 
 import (
-	"StorageService/internal/artist"
+	"StorageService/internal/data"
 	"StorageService/internal/handlers/helper"
+	"StorageService/internal/service"
 	"net/http"
 )
 
-type ArtistHandler struct {
-	ArtistService artist.ArtistService
-}
-
-func NewArtistHandler(artistService artist.ArtistService) *ArtistHandler {
-	return &ArtistHandler{
-		ArtistService: artistService,
-	}
-}
-
-func (h *ArtistHandler) HandleCreateArtist(w http.ResponseWriter, r *http.Request) {
+func HandleCreateArtist(w http.ResponseWriter, r *http.Request) {
 
 	name, err := helper.GetArtistName(r)
 	if err != nil {
@@ -24,9 +15,9 @@ func (h *ArtistHandler) HandleCreateArtist(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	artistInput := artist.Artist{Name: name}
+	artistInput := data.Artist{Name: name}
 
-	res, err := h.ArtistService.Save(&artistInput)
+	res, err := service.SaveArtist(&artistInput)
 	if err != nil {
 		http.Error(w, "Error creating artist", http.StatusInternalServerError)
 		return

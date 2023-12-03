@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"StorageService/internal/download"
-	"StorageService/internal/util/apierror"
+	"StorageService/internal/apierror"
+	"StorageService/internal/service"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -11,18 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type DownloadHandler struct {
-	DownloadService *download.DownloadService
-}
-
-func NewDownloadHandler(downloadService *download.DownloadService) *DownloadHandler {
-
-	return &DownloadHandler{
-		DownloadService: downloadService,
-	}
-}
-
-func (h *DownloadHandler) HandleDownloadSong(w http.ResponseWriter, r *http.Request) {
+func HandleDownloadSong(w http.ResponseWriter, r *http.Request) {
 	idStr, _ := mux.Vars(r)["id"] // NOTE: Safe to ignore error, because it's always defined.
 
 	id, err := strconv.Atoi(idStr)
@@ -37,17 +26,17 @@ func (h *DownloadHandler) HandleDownloadSong(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	file, err := h.DownloadService.DownloadSongById(id)
+	file, err := service.DownloadSongById(id)
 	if err != nil {
 		fmt.Println("Err in download handler", err)
 		apierror.HandleAPIError(w, err)
 		return
 	}
+
 	defer file.Close()
 
 	w.Header().Set("Content-Disposition", "attachment; filename="+file.Name())
 	w.Header().Set("Content-Type", "application/octet-stream")
 
 	http.ServeContent(w, r, file.Name(), time.Time{}, file)
-
 }
