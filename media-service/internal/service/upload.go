@@ -46,7 +46,7 @@ func GenerateAndPublishSongUploadEvent(songId int, title, artistName string) err
 		SongID:     songId,
 	}
 
-	err := PublishUploadSongEvent(uploadEvent)
+	err := publisher.PublishUploadSongEvent(uploadEvent)
 	if err != nil {
 		return err
 	}

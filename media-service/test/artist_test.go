@@ -9,18 +9,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
-func SetUpRouter() *mux.Router {
-	router := mux.NewRouter()
-	return router
-}
+func TestCreateArtist(t *testing.T) {
 
-func TestCreateartist(t *testing.T) {
-
-	tstDb, err := SetUpDbContainer(t)
+	tstDb, err := setUpDbContainer(t)
 	defer tstDb.Close()
 
 	if err != nil {
@@ -38,7 +32,7 @@ func TestCreateartist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router := SetUpRouter()
+	router := setUpRouter()
 	router.HandleFunc("/artists", handlers.HandleCreateArtist).Methods("POST")
 
 	req, err := http.NewRequest("POST", "/artists", bytes.NewBuffer(requestBody))

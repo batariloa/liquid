@@ -4,32 +4,31 @@ import (
 	"StorageService/internal/apierror"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func GetArtistID(r *http.Request) (int, error) {
-	var requestBody map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	err := r.ParseMultipartForm(10 << 20) // 10 MBs
 	if err != nil {
-		return 0, apierror.NewBadRequestError("Error decoding request body")
+		return 0, apierror.NewBadRequestError("Error parsing multipart form")
 	}
 
-	artistID, ok := requestBody["artistId"].(float64)
-	if !ok {
+	artistID, err := strconv.Atoi(r.FormValue("artistId"))
+	if err != nil {
 		return 0, apierror.NewBadRequestError("Artist ID not provided or invalid")
 	}
 
-	return int(artistID), nil
+	return artistID, nil
 }
 
 func GetSongTitle(r *http.Request) (string, error) {
-	var requestBody map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	err := r.ParseMultipartForm(10 << 20) // 10 MBs
 	if err != nil {
-		return "", apierror.NewBadRequestError("Error decoding request body")
+		return "", apierror.NewBadRequestError("Error parsing multipart form")
 	}
 
-	title, ok := requestBody["title"].(string)
-	if !ok {
+	title := r.FormValue("title")
+	if title == "" {
 		return "", apierror.NewBadRequestError("Song title not provided or invalid")
 	}
 

@@ -1,21 +1,25 @@
+// server/server.go
 package server
 
 import (
 	"StorageService/internal/handlers"
+	"StorageService/internal/service"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-type Server struct {
+type API struct {
+	EventProducer service.EventPublisher
 }
 
-func NewServer() *Server {
-	return &Server{}
+func NewAPI(eventProducer service.EventPublisher) *API {
+	return &API{
+		EventProducer: eventProducer,
+	}
 }
 
-func (s *Server) SetupServer() *http.Server {
-
+func (s *API) RegisterRoutes() *http.Server {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/artists", handlers.HandleCreateArtist).Methods("POST")

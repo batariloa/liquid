@@ -48,13 +48,12 @@ func HandleGetSongByID(w http.ResponseWriter, r *http.Request) {
 func HandleUploadSong(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(10 << 20) //10 MBs
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	file, handler, err := r.FormFile("song_file")
+	file, handler, err := r.FormFile("song-file")
 	if err != nil {
 		log.Println("apierror retrieving file", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

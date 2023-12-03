@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func SetUpDbContainer(t *testing.T) (*sql.DB, error) {
+func setUpDbContainer(t *testing.T) (*sql.DB, error) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	projectRoot := filepath.Dir(filepath.Dir(currentFile))
 	schemaFilePath := filepath.Join(projectRoot, "sql", "schema.sql")
@@ -53,4 +54,9 @@ func SetUpDbContainer(t *testing.T) (*sql.DB, error) {
 
 	// Return the connection so that it can be closed
 	return conn, nil
+}
+
+func setUpRouter() *mux.Router {
+	router := mux.NewRouter()
+	return router
 }

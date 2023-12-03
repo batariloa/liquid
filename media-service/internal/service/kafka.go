@@ -10,22 +10,29 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-var (
-	producer *kafka.Writer
-)
+type EventPublisher interface {
+	PublishUploadSongEvent(event types.UploadSongEvent) error
+	Close() error
+}
 
-func Init() {
+type KafkaService struct {
+	producer *kafka.Writer
+}
+
+func NewKafkaService() (*KafkaService, error) {
 	brokerAddress := os.Getenv("KAFKA_URL")
 	topic := os.Getenv("KAFKA_TOPIC")
 
-	producer = &kafka.Writer{
+	producer := &kafka.Writer{
 		Addr:                   kafka.TCP(brokerAddress),
 		Topic:                  topic,
 		AllowAutoTopicCreation: true,
 	}
+
+	return &KafkaService{producer: producer}, nil
 }
 
-func PublishUploadSongEvent(event types.UploadSongEvent) error {
+func (k *KafkaService) PublishUploadSongEvent(event types.UploadSongEvent) error {
 	msgValue, err := json.Marshal(event)
 	if err != nil {
 		return err
@@ -33,7 +40,7 @@ func PublishUploadSongEvent(event types.UploadSongEvent) error {
 
 	log.Printf("Publishing event with value: %s", msgValue)
 
-	err = producer.WriteMessages(context.Background(),
+	err = k.producer.WriteMessages(context.Background(),
 		kafka.Message{
 			Value: msgValue,
 		},
@@ -45,9 +52,9 @@ func PublishUploadSongEvent(event types.UploadSongEvent) error {
 	return nil
 }
 
-func Close() error {
-	if producer != nil {
-		return producer.Close()
+func (k *KafkaService) Close() error {
+	if k.producer != nil {
+		return k.producer.Close()
 	}
 	return nil
 }

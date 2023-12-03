@@ -1,7 +1,7 @@
 
 		CREATE TABLE IF NOT EXISTS artists (
 		    id SERIAL PRIMARY KEY,
-		    NAME TEXT NOT NULL 
+		    name TEXT NOT NULL 
 		);
 
 		CREATE TABLE IF NOT EXISTS songs (
@@ -10,4 +10,6 @@
     	title TEXT NOT NULL,
     	artist INT NOT NULL, 
     	FOREIGN KEY (artist) REFERENCES artists(id));
+
+		INSERT INTO artists (id, name) VALUES (5, 'Artist Example');
 

@@ -49,7 +49,7 @@ func createSchema(db *sql.DB) error {
 	schemaSQL := `
 		CREATE TABLE IF NOT EXISTS artists (
 		    id SERIAL PRIMARY KEY,
-		    NAME TEXT NOT NULL 
+		    name TEXT NOT NULL 
 		);
 
 		CREATE TABLE IF NOT EXISTS songs (
