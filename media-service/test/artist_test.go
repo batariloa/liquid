@@ -20,9 +20,8 @@ func SetUpRouter() *mux.Router {
 
 func TestCreateartist(t *testing.T) {
 
-	db, err := SetUpDbContainer(t)
-
-	defer db.Close()
+	tstDb, err := SetUpDbContainer(t)
+	defer tstDb.Close()
 
 	if err != nil {
 		t.Fatal(err)
@@ -46,6 +45,7 @@ func TestCreateartist(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)

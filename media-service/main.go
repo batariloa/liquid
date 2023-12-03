@@ -10,7 +10,6 @@ import (
 func main() {
 
 	db.Init()
-
 	serverInst := server.NewServer()
 	httpServer := serverInst.SetupServer()
 

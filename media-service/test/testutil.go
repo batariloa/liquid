@@ -1,14 +1,16 @@
 package test
 
 import (
+	"StorageService/internal/db"
 	"context"
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
+
+	_ "github.com/lib/pq"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
@@ -41,10 +43,14 @@ func SetUpDbContainer(t *testing.T) (*sql.DB, error) {
 	assert.NoError(t, err)
 
 	// Connect to the PostgreSQL database
-	db, err := sql.Open("postgres", connStr)
+	conn, err := sql.Open("postgres", connStr)
 	if err != nil {
 		t.Fatalf("Error connecting to the database: %v", err)
 	}
 
-	return db, nil
+	// Point global db variable to test container connection
+	db.DB = conn
+
+	// Return the connection so that it can be closed
+	return conn, nil
 }
