@@ -5,6 +5,7 @@ import (
 	"StorageService/internal/types"
 	"bytes"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +16,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
+
+const tracksPath = "./files/tracks"
 
 type MockEventPublisher struct {
 	mock.Mock
@@ -31,6 +34,14 @@ func (m *MockEventPublisher) Close() error {
 }
 
 func TestUploadSong_isOk(t *testing.T) {
+
+	// Clear any previous tracks
+	os.RemoveAll("./files/tracks")
+
+	// Ensure that the tracks folder is empty
+	files, err := ioutil.ReadDir(tracksPath)
+	assert.Empty(t, files, "Tracks folder should be empty before upload")
+
 	tstDb, err := setUpDbContainer(t)
 	if err != nil {
 		t.Fatal(err)
@@ -86,9 +97,12 @@ func TestUploadSong_isOk(t *testing.T) {
 	t.Logf("Response Body: %s", w.Body.String())
 
 	assert.Equal(t, http.StatusCreated, w.Code)
+
+	files, err = ioutil.ReadDir(tracksPath)
+	assert.NoError(t, err, "Reading tracks directory should not produce an error")
+	assert.NotEmpty(t, files, "Tracks folder should not be empty after upload")
 }
 
-// Test function tests if 400 is returned in case no song file is provided in the upload song request.
 func TestUploadSong_noSongFile(t *testing.T) {
 	tstDb, err := setUpDbContainer(t)
 	if err != nil {
@@ -137,8 +151,8 @@ func TestUploadSong_noSongFile(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
 
-// Test function tests if 400 is returned in case no title is provided in the upload song request.
 func TestUploadSong_noTitle(t *testing.T) {
+
 	tstDb, err := setUpDbContainer(t)
 	if err != nil {
 		t.Fatal(err)
@@ -250,4 +264,7 @@ func TestUploadSong_noArtistId(t *testing.T) {
 	t.Logf("Response Body: %s", w.Body.String())
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func deleteTracks() {
 }
