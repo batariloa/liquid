@@ -32,8 +32,11 @@ func TestCreateArtist(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	mockEventPublsher := new(MockEventPublisher)
+	handler := handlers.NewHandler(mockEventPublsher)
+
 	router := setUpRouter()
-	router.HandleFunc("/artists", handlers.HandleCreateArtist).Methods("POST")
+	router.HandleFunc("/artists", handler.HandleCreateArtist).Methods("POST")
 
 	req, err := http.NewRequest("POST", "/artists", bytes.NewBuffer(requestBody))
 	if err != nil {

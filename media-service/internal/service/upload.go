@@ -38,15 +38,9 @@ func UploadSong(file *multipart.File, fileHeader *multipart.FileHeader) (string,
 	return filePath, nil
 }
 
-func GenerateAndPublishSongUploadEvent(songId int, title, artistName string) error {
+func GenerateAndPublishSongUploadEvent(event types.UploadSongEvent, publisher EventPublisher) error {
 
-	uploadEvent := types.UploadSongEvent{
-		ArtistName: artistName,
-		Title:      title,
-		SongID:     songId,
-	}
-
-	err := publisher.PublishUploadSongEvent(uploadEvent)
+	err := publisher.PublishUploadSongEvent(event)
 	if err != nil {
 		return err
 	}

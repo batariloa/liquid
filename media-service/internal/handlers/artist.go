@@ -1,15 +1,16 @@
 package handlers
 
 import (
+	"StorageService/internal/apierror"
 	"StorageService/internal/data"
-	"StorageService/internal/handlers/helper"
 	"StorageService/internal/service"
+	"encoding/json"
 	"net/http"
 )
 
-func HandleCreateArtist(w http.ResponseWriter, r *http.Request) {
+func (*Handler) HandleCreateArtist(w http.ResponseWriter, r *http.Request) {
 
-	name, err := helper.GetArtistName(r)
+	name, err := getArtistName(r)
 	if err != nil {
 		http.Error(w, "Please provide all required fields", http.StatusBadRequest)
 		return
@@ -23,5 +24,20 @@ func HandleCreateArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helper.WriteJSONResponse(w, res, http.StatusCreated)
+	WriteJSONResponse(w, res, http.StatusCreated)
+}
+
+func getArtistName(r *http.Request) (string, error) {
+	var requestBody map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	if err != nil {
+		return "", apierror.NewBadRequestError("Error decoding request body")
+	}
+
+	name, ok := requestBody["name"].(string)
+	if !ok {
+		return "", apierror.NewBadRequestError("Artist name not provided or invalid")
+	}
+
+	return name, nil
 }

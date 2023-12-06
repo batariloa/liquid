@@ -1,9 +1,10 @@
 package main
 
 import (
+	"StorageService/internal/api"
 	"StorageService/internal/db"
 	_ "StorageService/internal/db"
-	"StorageService/internal/server"
+	"StorageService/internal/handlers"
 	"StorageService/internal/service"
 	"log"
 )
@@ -15,8 +16,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	handler := handlers.NewHandler(kafkaProducer)
+
 	db.Init()
-	serverInst := server.NewAPI(kafkaProducer)
+	serverInst := api.NewAPI(handler)
 	httpServer := serverInst.RegisterRoutes()
 
 	log.Fatal(httpServer.ListenAndServe())

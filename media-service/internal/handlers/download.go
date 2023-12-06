@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func HandleDownloadSong(w http.ResponseWriter, r *http.Request) {
+func (*Handler) HandleDownloadSong(w http.ResponseWriter, r *http.Request) {
 	idStr, _ := mux.Vars(r)["id"] // NOTE: Safe to ignore error, because it's always defined.
 
 	id, err := strconv.Atoi(idStr)
