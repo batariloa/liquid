@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: stream-song-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/v1/stream/**
+          filters:
+            - RewritePath=/api/v1/stream/(?<songId>.*), /v1/stream/${songId}
+
+        - id: songs-route
+          uri: http://localhost:3000
+          predicates:
+              - Path=/api/v1/songs
+          filters:
+              - RewritePath=/api/v1/songs, /songs
+
+        - id: artists-route
+          uri: http://localhost:3000
+          predicates:
+            - Path=/api/v1/artists
+            - Method=POST
+          filters:
+            - RewritePath=/api/v1/artists, /artists
+server:
+  port: 9000
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+

@@ -4,7 +4,6 @@ import (
 	"StorageService/internal/apierror"
 	"StorageService/internal/data"
 	"StorageService/internal/service"
-	"encoding/json"
 	"net/http"
 )
 
@@ -28,15 +27,9 @@ func (*Handler) HandleCreateArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func getArtistName(r *http.Request) (string, error) {
-	var requestBody map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&requestBody)
-	if err != nil {
-		return "", apierror.NewBadRequestError("Error decoding request body")
-	}
-
-	name, ok := requestBody["name"].(string)
-	if !ok {
-		return "", apierror.NewBadRequestError("Artist name not provided or invalid")
+	name := r.FormValue("name")
+	if name == "" {
+		return "", apierror.NewBadRequestError("Artist name not provided")
 	}
 
 	return name, nil
