@@ -75,6 +75,25 @@ services:
     networks:
       - my-net
 
+  gateway-service:
+    build: ./gateway
+    container_name: gateway-service
+    restart: always
+    depends_on:
+      - streaming-service
+      - media-service
+      - search-service
+    ports:
+      - "9000:9000"
+    environment:
+      PORT: 9000
+      STREAMING_SERVICE_URL: "http://streaming-service:8080"
+      MEDIA_SERVICE_URL: "http://media-service:3000"
+      SEARCH_SERVICE_URL: "http://search-service:8085"
+    networks:
+      - my-net
+
+      
 volumes:
   pg_data:
   kafka_data:

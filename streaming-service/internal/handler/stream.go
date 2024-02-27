@@ -46,6 +46,8 @@ func (h *StreamHandler) StreamSong(c *gin.Context) {
 	}
 	defer response.Body.Close()
 
+	c.Header("Content-Type", "audio/mpeg")
+
 	_, err = io.Copy(c.Writer, response.Body)
 	if err != nil {
 		fmt.Println("Error while streaming:", err)

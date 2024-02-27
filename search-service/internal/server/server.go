@@ -26,7 +26,7 @@ func NewServer(searchHandler *handler.SearchHandler) *Server {
 }
 
 func (s *Server) setupRoutes() {
-	s.router.GET("/search/:query", s.sh.HandleSearchByTitleAndArtist)
+	s.router.GET("/search/songs/:query", s.sh.HandleSearchSongByTitleAndArtist)
 }
 
 func (s *Server) Run(addr string) error {

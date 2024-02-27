@@ -16,7 +16,7 @@ func NewSearchHandler(searchService *search.SearchService) *SearchHandler {
 	}
 }
 
-func (h *SearchHandler) HandleSearchByTitleAndArtist(c *gin.Context) {
+func (h *SearchHandler) HandleSearchSongByTitleAndArtist(c *gin.Context) {
 	query := c.Param("query")
 	songs, err := h.searchService.SearchSongsByTitleOrArtist(query)
 	if err != nil {

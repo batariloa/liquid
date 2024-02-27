@@ -3,28 +3,36 @@ spring:
     gateway:
       routes:
         - id: stream-song-route
-          uri: http://localhost:8080
+          uri: ${STREAMING_SERVICE_URL:http://default-streaming-service-url}
           predicates:
             - Path=/api/v1/stream/**
           filters:
             - RewritePath=/api/v1/stream/(?<songId>.*), /v1/stream/${songId}
 
         - id: songs-route
-          uri: http://localhost:3000
+          uri: ${MEDIA_SERVICE_URL:http://default-media-service-url}
           predicates:
-              - Path=/api/v1/songs
+            - Path=/api/v1/songs
           filters:
-              - RewritePath=/api/v1/songs, /songs
+            - RewritePath=/api/v1/songs, /songs
 
         - id: artists-route
-          uri: http://localhost:3000
+          uri: ${MEDIA_SERVICE_URL:http://default-media-service-url}
           predicates:
             - Path=/api/v1/artists
             - Method=POST
           filters:
             - RewritePath=/api/v1/artists, /artists
+
+        - id: search-songs-route
+          uri: ${SEARCH_SERVICE_URL:http://default-search-service-url}
+          predicates:
+            - Path=/api/v1/search/songs/**
+          filters:
+            - RewritePath=/api/v1/search/songs/(?<query>.*), /search/songs/${query}
+
 server:
-  port: 9000
+  port: ${PORT:9000} # Read the port value from the PORT environment variable, default to 9000 if not set
 
 logging:
   level:
