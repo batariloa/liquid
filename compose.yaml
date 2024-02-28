@@ -92,7 +92,23 @@ services:
       SEARCH_SERVICE_URL: "http://search-service:8085"
     networks:
       - my-net
-
+      
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8133:8133"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: mysecretpassword
+      DB_NAME: mydatabase
+    networks:
+      - my-net
       
 volumes:
   pg_data:
