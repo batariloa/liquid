@@ -1,4 +1,5 @@
 package com.batarilo.userservice.config;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,19 +14,19 @@ import javax.sql.DataSource;
 @Setter
 public class DatabaseConfig {
 
-    @Value("${DB_HOST}")
+    @Value("${DB_HOST:localhost}")
     private String dbHost;
 
-    @Value("${DB_PORT}")
+    @Value("${DB_PORT:5432}")
     private int dbPort;
 
-    @Value("${DB_USER}")
+    @Value("${DB_USER:postgres}")
     private String dbUser;
 
-    @Value("${DB_PASSWORD}")
+    @Value("${DB_PASSWORD:mysecretpassword}")
     private String dbPassword;
 
-    @Value("${DB_NAME}")
+    @Value("${DB_NAME:mydatabase}")
     private String dbName;
 
     @Bean
