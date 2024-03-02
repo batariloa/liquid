@@ -3,22 +3,28 @@ package com.batarilo.userservice.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
+    @Value("${security.jwt.public-key}")
+    private String publicKeyString;
+
+    @Value("${security.jwt.private-key}")
+    private String privateKeyString;
 
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
@@ -49,13 +55,14 @@ public class JwtService {
         UserDetails userDetails,
         long expiration
     ) {
+        PrivateKey privateKey = getPrivateKey();
         return Jwts
             .builder()
             .setClaims(extraClaims)
             .setSubject(userDetails.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .signWith(privateKey, SignatureAlgorithm.RS256)
             .compact();
     }
 
@@ -75,18 +82,31 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
             .parserBuilder()
-            .setSigningKey(getSignInKey())
+            .setSigningKey(getPublicKey())
             .build()
             .parseClaimsJws(token)
             .getBody();
     }
 
-    private String extractJwtTokenFromHeader(String authorizationHeader) {
-        return authorizationHeader.substring(7);
+    private PrivateKey getPrivateKey() {
+        try {
+            byte[] keyBytes = Base64.decodeBase64(privateKeyString);
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePrivate(spec);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load private key", e);
+        }
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private PublicKey getPublicKey() {
+        try {
+            byte[] keyBytes = Base64.decodeBase64(publicKeyString);
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(spec);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load public key", e);
+        }
     }
 }

@@ -38,3 +38,6 @@ logging:
   level:
     org.springframework.cloud.gateway: TRACE
 
+security:
+  jwt:
+    public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlEiAGZRoxDR0awaEMcua1JQiPEvznXTM8frHAJlKzHyOxReqWFSD/NebwCUUTkD/tpOquamwATXQtIzUpsNv69WWcIrUx8F3BtA7VquhDPbFmHabrEDdUxq3sfVg7R5Dw/AvdhXIH7wuNwfiy+KzfQSwWtdNZvoKrwMYnovN1l48QQ14VBlUYtsGKszmSgHIFp8uwcGmhwoTyqtIQIVO3ynpOwC5Mr5fEcybGkVZI3ua3uvP7epPLK1FbOCv4tYq8s3YBEoV7x1buBSl8isJUonE7jOoEciDSgFymipmgejDWlktFSns4z0imX4MerK6xPZwTz+LMSQbMbEBYaCHGwIDAQAB"
