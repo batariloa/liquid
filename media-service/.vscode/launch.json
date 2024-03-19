@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "env": {
+                "PUBLIC_KEY": "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEApWwDqgRTVbB9o4RiL4CTQnMszmhV1DXaKUFGPyxtgPqlsvRvpaaP4BJH6FTjQcMpo5rRLdSaF+9DDqMNfWzQvd7wcMtqIrJbep281nHXMCegdJ4dbRpF3+lHq4LRWyWl2A8F0OJZRFyCAvJrqhCSA45tLbIDiyT0Xb/UeEUbye+7pcGMnX/pIabQzLv4XNfI9tlCxPlb/xKIYVz+EAN6/d6SdmaqODB8ZdB1XObpnORy3KzY49wqMeeebykJpbXNEIrm6ROu8KSgIAvuf8mzQ80QjlcCOcri+K2gSl0I+5WBDRu59KnUZ1horyCpneXitoQG2ak8nK3ECYKGAcEgYjy+JIo6mOe6TloN9Ev872xk00APRW2UWV0pfMrVXVIqnKefiBrSvWC95yRQkYELjZ5ELLxQyyxe3fvNtqIcp+H94K7PGbKmK3rT5h436pOpQUPKfRmdBQqJX1wMZJ9q+5H6jx/VTulskBxZqZqOfED4jdWaXhKQE3ZuPuVHhnlZAgMBAAE="
+
+            }
+        }
+    ]
+}

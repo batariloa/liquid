@@ -15,6 +15,7 @@ spring:
             - Path=/api/v1/songs
           filters:
             - RewritePath=/api/v1/songs, /songs
+            - AddRequestHeader=X-JWT-Token # Forward the JWT token if available
 
         - id: artists-route
           uri: ${MEDIA_SERVICE_URL:http://default-media-service-url}

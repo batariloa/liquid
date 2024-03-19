@@ -1,8 +1,8 @@
 package com.batarilo.userservice.service;
 
+import com.batarilo.userservice.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -47,7 +45,7 @@ public class JwtService
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails)
+    public String generateToken(User userDetails)
     {
         return buildToken(userDetails);
     }
@@ -58,7 +56,7 @@ public class JwtService
     }
 
     private String buildToken(
-        UserDetails userDetails
+        User userDetails
     )
     {
         PrivateKey privateKey = getPrivateKey();
@@ -69,6 +67,7 @@ public class JwtService
             .setSubject(userDetails.getUsername())
             .setAudience("account-d.docusign.com")
             .claim("scope", "signature impersonation")
+            .claim("userId", userDetails.getId())
             .setIssuedAt(Date.from(now))
             .setExpiration(Date.from(now.plus(5l, ChronoUnit.MINUTES)))
             .signWith(privateKey)

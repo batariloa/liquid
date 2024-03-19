@@ -8,24 +8,26 @@ import (
 )
 
 type SongData struct {
-	Id       int    `json:"id"`
-	FilePath string `json:"file_path"`
-	Title    string `json:"title"`
-	Artist   int    `json:"artist"`
+	Id         int    `json:"id"`
+	FilePath   string `json:"file_path"`
+	Title      string `json:"title"`
+	Artist     int    `json:"artist"`
+	UploadedBy int    `json:"uploadedBy"`
 }
 
-func NewSong(filePath string, title string, artistId int) *SongData {
+func NewSong(filePath string, title string, artistId int, userId int) *SongData {
 	return &SongData{
-		FilePath: filePath,
-		Title:    title,
-		Artist:   artistId,
+		FilePath:   filePath,
+		Title:      title,
+		Artist:     artistId,
+		UploadedBy: userId,
 	}
 }
 
 func SaveSong(data *SongData) (*SongData, error) {
 
-	_, err := db.DB.Exec("INSERT INTO songs (file_path, title, artist) VALUES ($1, $2, $3)",
-		data.FilePath, data.Title, data.Artist)
+	_, err := db.DB.Exec("INSERT INTO songs (file_path, title, artist, uploadedBy) VALUES ($1, $2, $3, $4)",
+		data.FilePath, data.Title, data.Artist, data.UploadedBy)
 	if err != nil {
 		fmt.Println("Error while saving song data:", err)
 		return nil, fmt.Errorf("apierror inserting data into database: %v", err)

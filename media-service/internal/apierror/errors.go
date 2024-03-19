@@ -12,6 +12,10 @@ type BadRequestError struct {
 	Message string
 }
 
+type UnauthorizedRequestError struct {
+	Message string
+}
+
 func (e NotFoundError) Error() string {
 	return e.Message
 }
@@ -33,5 +37,9 @@ func NewInternalServerError(message string) InternalServerError {
 }
 
 func NewBadRequestError(message string) BadRequestError {
+	return BadRequestError{Message: message}
+}
+
+func NewUnauthorizedRequestError(message string) BadRequestError {
 	return BadRequestError{Message: message}
 }

@@ -4,4 +4,5 @@ type SongUploadEvent struct {
 	ID         int    `json:"songId"`
 	Title      string `json:"title"`
 	ArtistName string `json:"artistName"`
+	UserId     int    `json:"userId"`
 }

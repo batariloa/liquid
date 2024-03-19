@@ -13,5 +13,6 @@ func EventToSong(e *model.SongUploadEvent) *model.Song {
 		ID:         strconv.Itoa(e.ID),
 		Title:      e.Title,
 		ArtistName: e.ArtistName,
+		UploadedBy: strconv.Itoa(e.UserId),
 	}
 }

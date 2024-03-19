@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"StorageService/internal/apierror"
+	"StorageService/internal/auth"
 	"StorageService/internal/data"
 	"StorageService/internal/service"
 	"StorageService/internal/types"
@@ -21,7 +22,7 @@ func (*Handler) HandleGetSongs(w http.ResponseWriter, r *http.Request) {
 
 func (*Handler) HandleGetSongByID(w http.ResponseWriter, r *http.Request) {
 
-	idStr, _ := mux.Vars(r)["id"] // NOTE: Safe to ignore error, because it's always defined.
+	idStr := mux.Vars(r)["id"] // NOTE: Safe to ignore error, because it's always defined.
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -47,7 +48,13 @@ func (*Handler) HandleGetSongByID(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleUploadSong(w http.ResponseWriter, r *http.Request) {
 
-	err := r.ParseMultipartForm(10 << 20) //10 MBs
+	userId, err := auth.ExtractUserIdFromToken(r)
+	if err != nil {
+		apierror.HandleAPIError(w, apierror.NewUnauthorizedRequestError("Username not found in request."))
+		return
+	}
+
+	err = r.ParseMultipartForm(10 << 20) //10 MBs
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -91,13 +98,14 @@ func (h *Handler) HandleUploadSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	song := data.NewSong(path, title, artistId)
+	song := data.NewSong(path, title, artistId, userId)
 	uploadedSong, err := data.SaveSong(song)
 
 	event := types.UploadSongEvent{
 		SongID:     uploadedSong.Id,
 		Title:      title,
 		ArtistName: artistResult.Name,
+		UserID:     userId,
 	}
 
 	err = service.GenerateAndPublishSongUploadEvent(event, h.EventPublisher)

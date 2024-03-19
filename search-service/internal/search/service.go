@@ -49,9 +49,10 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, 
 
 func (s *SearchService) IndexSong(song model.Song) error {
 	doc := map[string]interface{}{
-		"id":     song.ID,
-		"title":  song.Title,
-		"artist": song.ArtistName,
+		"id":         song.ID,
+		"title":      song.Title,
+		"artist":     song.ArtistName,
+		"uploadedBy": song.UploadedBy,
 	}
 	return s.index.Index(song.ID, doc)
 }

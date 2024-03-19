@@ -47,6 +47,8 @@ func Init() error {
 
 func createSchema(db *sql.DB) error {
 	schemaSQL := `
+
+		DROP TABLE songs;
 		CREATE TABLE IF NOT EXISTS artists (
 		    id SERIAL PRIMARY KEY,
 		    name TEXT NOT NULL 
@@ -56,9 +58,11 @@ func createSchema(db *sql.DB) error {
     	id SERIAL PRIMARY KEY,
    		file_path TEXT NOT NULL,
     	title TEXT NOT NULL,
-    	artist INT NOT NULL, 
-    	FOREIGN KEY (artist) REFERENCES artists(id));
-
+    	artist INT NOT NULL,
+		uploadedBy INT NOT NULL,
+    	FOREIGN KEY (artist) REFERENCES artists(id),
+		FOREIGN KEY (uploadedBy) REFERENCES users(id)
+	);
 `
 	_, err := db.Exec(schemaSQL)
 	if err != nil {
