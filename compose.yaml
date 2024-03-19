@@ -74,24 +74,6 @@ services:
       KAFKA_TOPIC: song_uploads 
     networks:
       - my-net
-
-  gateway-service:
-    build: ./gateway
-    container_name: gateway-service
-    restart: always
-    depends_on:
-      - streaming-service
-      - media-service
-      - search-service
-    ports:
-      - "9000:9000"
-    environment:
-      PORT: 9000
-      STREAMING_SERVICE_URL: "http://streaming-service:8080"
-      MEDIA_SERVICE_URL: "http://media-service:3000"
-      SEARCH_SERVICE_URL: "http://search-service:8085"
-    networks:
-      - my-net
       
   user-service:
     build: ./user-service
@@ -109,6 +91,26 @@ services:
       DB_NAME: mydatabase
     networks:
       - my-net
+
+  gateway-service:
+    build: ./gateway
+    container_name: gateway-service
+    restart: always
+    depends_on:
+      - streaming-service
+      - media-service
+      - search-service
+    ports:
+      - "9000:9000"
+    environment:
+      PORT: 9000
+      STREAMING_SERVICE_URL: "http://streaming-service:8080"
+      MEDIA_SERVICE_URL: "http://media-service:3000"
+      SEARCH_SERVICE_URL: "http://search-service:8085"
+      USER_SERVICE_URL: "http://user-service:8133"
+    networks:
+      - my-net
+
       
 volumes:
   pg_data:

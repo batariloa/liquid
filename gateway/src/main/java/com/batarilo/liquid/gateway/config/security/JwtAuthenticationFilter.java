@@ -53,11 +53,10 @@ public class JwtAuthenticationFilter implements WebFilter
 
     private UserDetails getUserDetailsFromToken(String token)
     {
-        UserDetails userDetails = User.withUsername("username")
+        return User.withUsername("username")
             .password("password")
             .authorities(new SimpleGrantedAuthority("ROLE_USER"))
             .build();
-        return userDetails;
     }
 }
 

@@ -6,13 +6,16 @@ import com.batarilo.userservice.model.User;
 import com.batarilo.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationService
+{
 
     private final UserRepository userRepository;
 
@@ -20,8 +23,8 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
-    public User signup(RegisterUserDto input) {
-
+    public User signup(RegisterUserDto input)
+    {
         User user = User.builder()
             .email(input.getEmail())
             .password(passwordEncoder.encode(input.getPassword()))
@@ -31,7 +34,8 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginUserDto input) {
+    public User authenticate(LoginUserDto input)
+    {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 input.getEmail(),
@@ -40,6 +44,13 @@ public class AuthenticationService {
         );
 
         return userRepository.findByEmail(input.getEmail())
-            .orElseThrow();
+            .orElseThrow(() -> new BadCredentialsException("Bad credentials."));
+    }
+
+    public Boolean isEmailInUse(String email)
+    {
+        return userRepository
+            .findByEmail(email)
+            .isPresent();
     }
 }

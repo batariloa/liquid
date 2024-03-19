@@ -2,11 +2,12 @@ package com.batarilo.liquid.gateway.service;
 
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 @Service
@@ -18,9 +19,14 @@ public class JwtService
     public boolean validateToken(String token) {
         try {
             byte[] keyBytes = Base64.getDecoder().decode(publicKeyString);
-            Key publicKey = Keys.hmacShaKeyFor(keyBytes);
 
-            Jws<?> claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+            Jws<?> claims = Jwts.parser()
+                .verifyWith(publicKey)
+                .build().parseSignedClaims(token);
 
             return true;
         } catch (Exception e) {

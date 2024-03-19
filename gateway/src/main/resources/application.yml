@@ -31,6 +31,21 @@ spring:
           filters:
             - RewritePath=/api/v1/search/songs/(?<query>.*), /search/songs/${query}
 
+        - id: user-login-route
+          uri: ${USER_SERVICE_URL:http://default-user-service-url}
+          predicates:
+            - Path=/api/v1/auth/login
+          filters:
+            - RewritePath=/api/v1/auth/login, /api/v1/auth/login
+
+        - id: user-register-route
+          uri: ${USER_SERVICE_URL:http://default-user-service-url}
+          predicates:
+            - Path=/api/v1/auth/register
+          filters:
+            - RewritePath=/api/v1/auth/register, /api/v1/auth/register
+
+
 server:
   port: ${PORT:9000} # Read the port value from the PORT environment variable, default to 9000 if not set
 

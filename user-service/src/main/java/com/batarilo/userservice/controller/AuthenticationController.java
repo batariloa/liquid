@@ -8,6 +8,7 @@ import com.batarilo.userservice.model.User;
 import com.batarilo.userservice.service.AuthenticationService;
 import com.batarilo.userservice.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController
 {
@@ -28,7 +29,11 @@ public class AuthenticationController
     private final JwtService jwtService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) throws BadRequestException
+    {
+        if(authenticationService.isEmailInUse(registerUserDto.getEmail())) {
+            throw new BadRequestException("Email already in use.");
+        }
 
         User registeredUser = authenticationService.signup(registerUserDto);
 
