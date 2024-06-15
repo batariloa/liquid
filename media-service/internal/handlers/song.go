@@ -16,10 +16,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (*Handler) HandleGetSongs(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "List of songs")
-}
-
 func (*Handler) HandleGetSongByID(w http.ResponseWriter, r *http.Request) {
 
 	idStr := mux.Vars(r)["id"] // NOTE: Safe to ignore error, because it's always defined.

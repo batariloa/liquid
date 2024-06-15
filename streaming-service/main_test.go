@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -29,4 +30,10 @@ func TestSongHandler_getSongById(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
+
+	assert.Equal(t, "audio/mpeg", w.Header().Get("Content-Type"))
+
+	body, _ := ioutil.ReadAll(w.Body)
+	expectedContent := "Mock MP3 file content goes here"
+	assert.Equal(t, expectedContent, string(body))
 }

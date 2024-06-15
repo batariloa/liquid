@@ -28,4 +28,6 @@ paths:
           schema:
             type: string
       summary: Stream a song to user
+      tags:
+      - StreamHandler
 swagger: "2.0"

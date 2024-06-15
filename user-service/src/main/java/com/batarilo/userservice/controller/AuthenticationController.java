@@ -55,24 +55,4 @@ public class AuthenticationController
 
         return ResponseEntity.ok(loginResponse);
     }
-
-    @GetMapping("/user")
-    public UserDataDto getUserData() {
-
-        Authentication authentication = SecurityContextHolder
-            .getContext()
-            .getAuthentication();
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserDetails userDetails) {
-            String username = userDetails.getUsername();
-
-            return UserDataDto.builder()
-                .username(username)
-                .build();
-        } else {
-            throw new AccessDeniedException("Invalid token");
-        }
-    }
 }

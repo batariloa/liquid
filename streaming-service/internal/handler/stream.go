@@ -20,17 +20,18 @@ func New(fs service.SongFetcher) *StreamHandler {
 	}
 }
 
-// Stream Song godoc
+// StreamSong godoc
 // @Summary Stream a song to user
 // @Description Stream a song to the user by providing the song ID
+// @Tags StreamHandler
 // @ID streamSongToUser
 // @Produce octet-stream
-// @Param songId path integer true "Song ID to stream"
+// @Param songId path int true "Song ID to stream"
 // @Success 200 {file} application/octet-stream
 // @Failure 400 {string} string "Bad Request: Invalid ID"
 // @Failure 500 {string} string "Internal Server Error: File download failed"
 // @Router /v1/stream/{songId} [get]
-func (h *StreamHandler) StreamSong(c *gin.Context) {
+func (h StreamHandler) StreamSong(c *gin.Context) {
 
 	idStr := c.Param("songId")
 
@@ -47,9 +48,25 @@ func (h *StreamHandler) StreamSong(c *gin.Context) {
 	defer response.Body.Close()
 
 	c.Header("Content-Type", "audio/mpeg")
+	c.Status(http.StatusOK)
 
-	_, err = io.Copy(c.Writer, response.Body)
-	if err != nil {
-		fmt.Println("Error while streaming:", err)
+	buf := make([]byte, 1024*10) // 10KB buffer size
+	for {
+		n, err := response.Body.Read(buf)
+		if n > 0 {
+			if _, writeErr := c.Writer.Write(buf[:n]); writeErr != nil {
+				fmt.Println("Error while streaming:", writeErr)
+				return
+			}
+			c.Writer.Flush() // Ensure that the data is sent to the client
+		}
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			fmt.Println("Error while reading:", err)
+			c.String(http.StatusInternalServerError, "Internal Server Error: Streaming failed")
+			return
+		}
 	}
 }

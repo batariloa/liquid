@@ -10,7 +10,7 @@ type Handler struct {
 	EventPublisher service.EventPublisher
 }
 
-func NewHandler(eventPublisher service.EventPublisher /*, other parameters */) *Handler {
+func NewHandler(eventPublisher service.EventPublisher) *Handler {
 	return &Handler{
 		EventPublisher: eventPublisher,
 	}

@@ -21,6 +21,9 @@ const docTemplate = `{
                 "produces": [
                     "application/octet-stream"
                 ],
+                "tags": [
+                    "StreamHandler"
+                ],
                 "summary": "Stream a song to user",
                 "operationId": "streamSongToUser",
                 "parameters": [

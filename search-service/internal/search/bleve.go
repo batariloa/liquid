@@ -10,9 +10,9 @@ import (
 
 const indexDirectory = "songs.bleve"
 
-// InitializeBleveIndex initializes or opens the Bleve index.
+// initializes or opens the Bleve index.
 func InitializeBleveIndex() (bleve.Index, error) {
-	// Check if the index directory exists
+
 	indexExists, err := indexDirectoryExists(indexDirectory)
 	if err != nil {
 		log.Printf("Failed to check if index directory exists: %v", err)
@@ -28,7 +28,6 @@ func InitializeBleveIndex() (bleve.Index, error) {
 	return createNewIndex()
 }
 
-// createNewIndex creates and configures a new Bleve index.
 func createNewIndex() (bleve.Index, error) {
 	englishTextFieldMapping := bleve.NewTextFieldMapping()
 	englishTextFieldMapping.Analyzer = en.AnalyzerName
@@ -45,7 +44,6 @@ func createNewIndex() (bleve.Index, error) {
 	return bleve.New(indexDirectory, indexMapping)
 }
 
-// indexDirectoryExists checks if the provided directory exists.
 func indexDirectoryExists(directoryPath string) (bool, error) {
 	if _, err := os.Stat(directoryPath); err != nil {
 		if os.IsNotExist(err) {
@@ -55,4 +53,3 @@ func indexDirectoryExists(directoryPath string) (bool, error) {
 	}
 	return true, nil
 }
-
