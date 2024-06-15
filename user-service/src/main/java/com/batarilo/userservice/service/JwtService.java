@@ -69,7 +69,7 @@ public class JwtService
             .claim("scope", "signature impersonation")
             .claim("userId", userDetails.getId())
             .setIssuedAt(Date.from(now))
-            .setExpiration(Date.from(now.plus(5l, ChronoUnit.MINUTES)))
+            .setExpiration(Date.from(now.plus(jwtExpiration, ChronoUnit.MILLIS)))
             .signWith(privateKey)
             .compact();
     }

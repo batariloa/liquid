@@ -14,6 +14,21 @@ services:
       - pg_data:/var/lib/postgresql/data
     networks:
       - my-net
+      
+  postgres-user-service:
+    image: postgres:15
+    container_name: postgres-user-service
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: userdatabase
+    ports:
+      - "5433:5432"  # Map a different port (5433) for the user-service database
+    volumes:
+      - pg_data_user_service:/var/lib/postgresql/data
+    networks:
+      - my-net
 
   kafka:
     image: spotify/kafka
@@ -114,6 +129,7 @@ services:
       
 volumes:
   pg_data:
+  pg_data_user_service:
   kafka_data:
 
 

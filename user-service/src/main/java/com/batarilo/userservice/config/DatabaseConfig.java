@@ -17,7 +17,7 @@ public class DatabaseConfig {
     @Value("${DB_HOST:localhost}")
     private String dbHost;
 
-    @Value("${DB_PORT:5432}")
+    @Value("${DB_PORT:5433}")
     private int dbPort;
 
     @Value("${DB_USER:postgres}")
