@@ -2,6 +2,7 @@ package com.batarilo.userservice.controller;
 
 import com.batarilo.userservice.dto.LoginResponseDto;
 import com.batarilo.userservice.dto.LoginUserDto;
+import com.batarilo.userservice.dto.NewUserResponse;
 import com.batarilo.userservice.dto.RegisterUserDto;
 import com.batarilo.userservice.model.User;
 import com.batarilo.userservice.service.AuthenticationService;
@@ -11,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,15 +27,14 @@ public class AuthenticationController
     private final JwtService jwtService;
 
     @PostMapping("/register")
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<User> register(@RequestBody
+    public ResponseEntity<NewUserResponse> register(@RequestBody
                                              @Valid RegisterUserDto registerUserDto) throws BadRequestException
     {
         if(authenticationService.isEmailInUse(registerUserDto.getEmail())) {
             throw new BadRequestException("Email already in use.");
         }
 
-        User registeredUser = authenticationService.signup(registerUserDto);
+        NewUserResponse registeredUser = authenticationService.signup(registerUserDto);
 
         return ResponseEntity.ok(registeredUser);
     }

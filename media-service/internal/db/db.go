@@ -47,26 +47,25 @@ func Init() error {
 
 func createSchema(db *sql.DB) error {
 	schemaSQL := `
+        DROP TABLE IF EXISTS songs;
+        
+        CREATE TABLE IF NOT EXISTS artists (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL 
+        );
 
-		DROP TABLE songs;
-		CREATE TABLE IF NOT EXISTS artists (
-		    id SERIAL PRIMARY KEY,
-		    name TEXT NOT NULL 
-		);
-
-		CREATE TABLE IF NOT EXISTS songs (
-    	id SERIAL PRIMARY KEY,
-   		file_path TEXT NOT NULL,
-    	title TEXT NOT NULL,
-    	artist INT NOT NULL,
-		uploadedBy INT NOT NULL,
-    	FOREIGN KEY (artist) REFERENCES artists(id),
-		FOREIGN KEY (uploadedBy) REFERENCES users(id)
-	);
-`
+        CREATE TABLE IF NOT EXISTS songs (
+            id SERIAL PRIMARY KEY,
+            file_path TEXT NOT NULL,
+            title TEXT NOT NULL,
+            artist INT NOT NULL,
+            uploadedBy INT NOT NULL,
+            FOREIGN KEY (artist) REFERENCES artists(id)
+        );
+    `
 	_, err := db.Exec(schemaSQL)
 	if err != nil {
-		return fmt.Errorf("apierror executing schema creation: %w", err)
+		return fmt.Errorf("error executing schema creation: %w", err)
 	}
 
 	return nil

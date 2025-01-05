@@ -1,6 +1,7 @@
 package com.batarilo.userservice.service;
 
 import com.batarilo.userservice.dto.LoginUserDto;
+import com.batarilo.userservice.dto.NewUserResponse;
 import com.batarilo.userservice.dto.RegisterUserDto;
 import com.batarilo.userservice.model.User;
 import com.batarilo.userservice.repository.UserRepository;
@@ -18,12 +19,10 @@ public class AuthenticationService
 {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
 
-    public User signup(RegisterUserDto input)
+    public NewUserResponse signup(RegisterUserDto input)
     {
         User user = User.builder()
             .email(input.getEmail())
@@ -31,7 +30,13 @@ public class AuthenticationService
             .fullName(input.getFullName())
             .build();
 
-        return userRepository.save(user);
+     User resultUser = userRepository.save(user);
+
+     return NewUserResponse.builder()
+             .id(resultUser.getId())
+             .email(resultUser.getEmail())
+             .fullName(resultUser.getFullName())
+             .build();
     }
 
     public User authenticate(LoginUserDto input)

@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:15
@@ -14,6 +13,11 @@ services:
       - pg_data:/var/lib/postgresql/data
     networks:
       - my-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
       
   postgres-user-service:
     image: postgres:15
@@ -24,11 +28,16 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: userdatabase
     ports:
-      - "5433:5432"  # Map a different port (5433) for the user-service database
+      - "5433:5432"
     volumes:
-      - pg_data_user_service:/var/lib/postgresql/data
+      - ./user-data:/var/lib/postgresql/data
     networks:
       - my-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   kafka:
     image: spotify/kafka
@@ -47,8 +56,10 @@ services:
     container_name: media-service
     restart: always
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     ports:
       - "3000:3000"
     environment:
@@ -62,13 +73,16 @@ services:
     command: ["go", "run", "main.go"] 
     networks:
       - my-net
-  
+
   streaming-service:
     build: ./streaming-service
     container_name: streaming-service
     restart: always
     depends_on:
-      - kafka
+      media-service:
+        condition: service_started
+      kafka:
+        condition: service_started
     ports:
       - "8080:8080"
     command: ["go", "run", "main.go"] 
@@ -80,7 +94,10 @@ services:
     container_name: search-service
     restart: always
     depends_on:
-      - kafka
+      media-service:
+        condition: service_started
+      kafka:
+        condition: service_started
     ports:
       - "8085:8085"
     command: ["go", "run", "main.go"]
@@ -95,15 +112,20 @@ services:
     container_name: user-service
     restart: always
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      postgres-user-service:
+        condition: service_healthy
+      media-service:
+        condition: service_started
     ports:
       - "8133:8133"
     environment:
-      DB_HOST: postgres
+      DB_HOST: postgres-user-service
       DB_PORT: "5432"
       DB_USER: postgres
       DB_PASSWORD: mysecretpassword
-      DB_NAME: mydatabase
+      DB_NAME: userdatabase
     networks:
       - my-net
 
@@ -112,9 +134,14 @@ services:
     container_name: gateway-service
     restart: always
     depends_on:
-      - streaming-service
-      - media-service
-      - search-service
+      media-service:
+        condition: service_started
+      streaming-service:
+        condition: service_started
+      search-service:
+        condition: service_started
+      user-service:
+        condition: service_started
     ports:
       - "9000:9000"
     environment:
@@ -125,15 +152,12 @@ services:
       USER_SERVICE_URL: "http://user-service:8133"
     networks:
       - my-net
-
       
 volumes:
   pg_data:
   pg_data_user_service:
   kafka_data:
 
-
 networks:
   my-net:
     driver: bridge
-

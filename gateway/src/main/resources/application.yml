@@ -15,7 +15,6 @@ spring:
             - Path=/api/v1/songs
           filters:
             - RewritePath=/api/v1/songs, /songs
-            - AddRequestHeader=X-JWT-Token # Forward the JWT token if available
 
         - id: artists-route
           uri: ${MEDIA_SERVICE_URL:http://default-media-service-url}
@@ -23,7 +22,8 @@ spring:
             - Path=/api/v1/artists
             - Method=POST
           filters:
-            - RewritePath=/api/v1/artists, /artists
+            - RewritePath=/api/v1/songs, /songs
+            - AddRequestHeader=Authorization, "#{gatewayContext.getRequest().getHeaders().getFirst('Authorization')}"
 
         - id: search-songs-route
           uri: ${SEARCH_SERVICE_URL:http://default-search-service-url}

@@ -21,7 +21,7 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, 
 	queryString := "title:" + query + " OR artist:" + query
 	searchQuery := bleve.NewQueryStringQuery(queryString)
 	searchRequest := bleve.NewSearchRequest(searchQuery)
-	searchRequest.Fields = []string{"title", "artist"}
+	searchRequest.Fields = []string{"title", "artist", "uploadedBy"}
 	searchRequest.Size = 10
 
 	searchResults, err := s.index.Search(searchRequest)
@@ -40,6 +40,9 @@ func (s *SearchService) SearchSongsByTitleOrArtist(query string) ([]model.Song, 
 		}
 		if artist, ok := hit.Fields["artist"].(string); ok {
 			song.ArtistName = artist
+		}
+		if uploadedBy, ok := hit.Fields["uploadedBy"].(string); ok {
+			song.UploadedBy = uploadedBy
 		}
 		songs = append(songs, song)
 	}

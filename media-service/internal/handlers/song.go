@@ -46,9 +46,11 @@ func (h *Handler) HandleUploadSong(w http.ResponseWriter, r *http.Request) {
 
 	userId, err := auth.ExtractUserIdFromToken(r)
 	if err != nil {
-		apierror.HandleAPIError(w, apierror.NewUnauthorizedRequestError("Username not found in request."))
+		apierror.HandleAPIError(w, apierror.NewUnauthorizedRequestError("User ID not found in request."))
 		return
 	}
+
+	log.Println("Got User ID from Token:", userId)
 
 	err = r.ParseMultipartForm(10 << 20) //10 MBs
 	if err != nil {

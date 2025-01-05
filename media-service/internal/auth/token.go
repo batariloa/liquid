@@ -44,6 +44,7 @@ func init() {
 }
 
 func ExtractUserIdFromToken(r *http.Request) (int, error) {
+
 	tokenString := extractTokenFromRequest(r)
 	if tokenString == "" {
 		return 0, apierror.NewNotFoundError("No token found")
@@ -65,7 +66,10 @@ func ExtractUserIdFromToken(r *http.Request) (int, error) {
 }
 
 func extractTokenFromRequest(r *http.Request) string {
+
 	token := r.Header.Get("Authorization")
+	log.Println("Getting token header", token)
+
 	if token != "" && strings.HasPrefix(token, "Bearer ") {
 		return strings.TrimPrefix(token, "Bearer ")
 	}

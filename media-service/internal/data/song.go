@@ -5,6 +5,7 @@ import (
 	"StorageService/internal/db"
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 type SongData struct {
@@ -26,6 +27,8 @@ func NewSong(filePath string, title string, artistId int, userId int) *SongData 
 
 func SaveSong(data *SongData) (*SongData, error) {
 
+	log.Println("Log user ID in SaveSong", data.UploadedBy)
+
 	_, err := db.DB.Exec("INSERT INTO songs (file_path, title, artist, uploadedBy) VALUES ($1, $2, $3, $4)",
 		data.FilePath, data.Title, data.Artist, data.UploadedBy)
 	if err != nil {
@@ -33,11 +36,11 @@ func SaveSong(data *SongData) (*SongData, error) {
 		return nil, fmt.Errorf("apierror inserting data into database: %v", err)
 	}
 
-	query := "SELECT id, file_path, title, artist FROM songs WHERE artist = $1 ORDER BY id DESC LIMIT 1"
+	query := "SELECT id, file_path, title, artist, uploadedBy FROM songs WHERE artist = $1 ORDER BY id DESC LIMIT 1"
 	row := db.DB.QueryRow(query, data.Artist)
 
 	var savedData SongData
-	err = row.Scan(&savedData.Id, &savedData.FilePath, &savedData.Title, &savedData.Artist)
+	err = row.Scan(&savedData.Id, &savedData.FilePath, &savedData.Title, &savedData.Artist, &savedData.UploadedBy)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch the saved row from the database: %v", err)
 	}
