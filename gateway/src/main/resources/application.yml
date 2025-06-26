@@ -8,6 +8,9 @@ spring:
             - Path=/api/v1/stream/**
           filters:
             - RewritePath=/api/v1/stream/(?<songId>.*), /v1/stream/${songId}
+            - SetResponseHeader=Content-Type, audio/mpeg
+          preserveHostHeader: true
+
 
         - id: songs-route
           uri: ${MEDIA_SERVICE_URL:http://default-media-service-url}
@@ -22,7 +25,7 @@ spring:
             - Path=/api/v1/artists
             - Method=POST
           filters:
-            - RewritePath=/api/v1/songs, /songs
+            - RewritePath=/api/v1/artists, /artists
             - AddRequestHeader=Authorization, "#{gatewayContext.getRequest().getHeaders().getFirst('Authorization')}"
 
         - id: search-songs-route

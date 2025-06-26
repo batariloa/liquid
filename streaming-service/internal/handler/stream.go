@@ -48,6 +48,7 @@ func (h StreamHandler) StreamSong(c *gin.Context) {
 	defer response.Body.Close()
 
 	c.Header("Content-Type", "audio/mpeg")
+	c.Header("Content-Disposition", `inline; filename="song.mp3"`)
 	c.Status(http.StatusOK)
 
 	buf := make([]byte, 1024*10) // 10KB buffer size

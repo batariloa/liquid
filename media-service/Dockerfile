@@ -13,4 +13,3 @@ RUN go build -o media-service
 EXPOSE 3000
 
 CMD ["./media-service"]
-
